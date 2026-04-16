@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Khách Hàng</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body data-page="customers">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Bộ dữ liệu 03</p>
+          <h2>Khách Hàng</h2>
+          <!-- <p>
+            Lưu họ tên, email, số điện thoại và địa chỉ giao hàng cho hệ thống
+            bán hàng online.
+          </p> -->
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-link" data-page="dashboard" href="/dashboard">
+            <span>Tổng quan</span>
+            <span>01</span>
+          </a>
+          <a class="nav-link" data-page="categories" href="/categories">
+            <span>Danh mục</span>
+            <span>02</span>
+          </a>
+          <a class="nav-link" data-page="products" href="/products">
+            <span>Sản phẩm</span>
+            <span>03</span>
+          </a>
+          <a class="nav-link" data-page="customers" href="/customers">
+            <span>Khách hàng</span>
+            <span>04</span>
+          </a>
+          <a class="nav-link" data-page="orders" href="/orders">
+            <span>Đơn hàng</span>
+            <span>05</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p class="eyebrow">Đường dẫn</p>
+          <small><code>GET/POST/PUT/DELETE /api/customers</code></small>
+          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="page-hero">
+          <div>
+            <p class="eyebrow">CRUD Khách hàng</p>
+            <h1>Quản lý thông tin người mua</h1>
+            <p>
+              Trang này phục vụ cho việc thêm mới, cập nhật và xóa thông tin
+              khách hàng, đồng thời email được đặt unique để tránh trùng lặp.
+            </p>
+          </div>
+          <div class="hero-pill">Bộ dữ liệu: <code>customers</code></div>
+        </section>
+
+        <section class="content-grid two-columns">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Biểu mẫu</p>
+                <h2 id="customerFormTitle">Thêm khách hàng mới</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <form id="customerForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="customerFullName">Họ tên</label>
+                    <input id="customerFullName" name="fullName" placeholder="Nguyễn Văn A" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="customerPhone">Số điện thoại</label>
+                    <input id="customerPhone" name="phone" placeholder="09xxxxxxxx" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="customerEmail">Email</label>
+                    <input id="customerEmail" name="email" type="email" placeholder="khach@email.com" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="customerCity">Thành phố</label>
+                    <input id="customerCity" name="city" placeholder="TP. Hồ Chí Minh" />
+                  </div>
+
+                  <div class="field full">
+                    <label for="customerAddress">Địa chỉ</label>
+                    <input id="customerAddress" name="address" placeholder="123 Nguyễn Trãi, Quận 1" />
+                  </div>
+
+                  <div class="field full">
+                    <label for="customerNotes">Ghi chú</label>
+                    <textarea
+                      id="customerNotes"
+                      name="notes"
+                      placeholder="Thông tin bổ sung về khách hàng"
+                    ></textarea>
+                  </div>
+
+                  <div class="field full">
+                    <label for="customerStatus">Trạng thái</label>
+                    <select id="customerStatus" name="status">
+                      <option value="active">Đang hoạt động</option>
+                      <option value="inactive">Tạm khóa</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="button-row">
+                  <button class="btn btn-primary" id="customerSubmitButton" type="submit">
+                    Lưu khách hàng
+                  </button>
+                  <button class="btn btn-secondary" id="customerCancelButton" type="button">
+                    Hủy chỉnh sửa
+                  </button>
+                </div>
+              </form>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Mô tả</p>
+                <h2>Điểm cần demo</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <ul class="tips-list">
+                <li>Email được đặt unique nên có thể dùng để demo validate trùng dữ liệu.</li>
+                <li>Địa chỉ khách hàng sẽ được gợi ý sang trang đơn hàng khi tạo mới đơn hàng.</li>
+                <li>Trạng thái khách hàng cho phép giữ lịch sử mà vẫn biểu diễn người dùng tạm ngừng.</li>
+              </ul>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Danh sách</p>
+              <h2>Thông tin khách hàng</h2>
+            </div>
+          </div>
+          <div class="panel-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th>Thành phố</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody">
+                <tr>
+                  <td colspan="6" class="empty-cell">Đang tải dữ liệu...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/shared.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/customers.js"></script>
+  </body>
+</html>

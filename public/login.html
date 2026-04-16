@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Nhập Hệ Thống</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body data-page="login">
+    <main class="auth-shell">
+      <section class="auth-layout">
+        <article class="auth-panel">
+          <p class="eyebrow">Quản lý bán hàng online</p>
+          <h1>Đăng nhập theo vai trò</h1>
+          <p>
+            Hệ thống có hai luồng sử dụng riêng: quản trị viên sẽ vào khu vực
+            dashboard để CRUD dữ liệu, còn người dùng sẽ vào trang web bán hàng
+            để xem các sản phẩm đang kinh doanh.
+          </p>
+
+          <div class="credential-grid">
+            <div class="credential-card">
+              <strong>Tài khoản quản trị</strong>
+              <span>Tên đăng nhập: <code>admin</code></span><br />
+              <span>Mật khẩu: <code>admin123</code></span>
+            </div>
+
+            <div class="credential-card">
+              <strong>Tài khoản người dùng</strong>
+              <span>Tên đăng nhập: <code>user</code></span><br />
+              <span>Mật khẩu: <code>user123</code></span>
+            </div>
+          </div>
+
+          <div class="auth-note">
+            Đăng nhập admin sẽ được chuyển thẳng tới dashboard quản trị. Đăng
+            nhập user sẽ được chuyển tới trang web bán hàng.
+          </div>
+        </article>
+
+        <article class="auth-panel">
+          <p class="eyebrow">Biểu mẫu đăng nhập</p>
+          <h2>Chào mừng quay lại</h2>
+
+          <form id="loginForm">
+            <div class="form-grid">
+              <div class="field full">
+                <label for="loginUsername">Tên đăng nhập</label>
+                <input id="loginUsername" name="username" placeholder="Nhập tên đăng nhập" required />
+              </div>
+
+              <div class="field full">
+                <label for="loginPassword">Mật khẩu</label>
+                <input
+                  id="loginPassword"
+                  name="password"
+                  type="password"
+                  placeholder="Nhập mật khẩu"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button class="btn btn-primary" type="submit" id="loginSubmitButton">
+                Đăng nhập
+              </button>
+            </div>
+          </form>
+        </article>
+      </section>
+    </main>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/shared.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/login.js"></script>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Đơn Hàng</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body data-page="orders">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Bộ dữ liệu 04</p>
+          <h2>Đơn Hàng</h2>
+          <!-- <p>
+            Tạo đơn hàng online với nhiều sản phẩm, liên kết khách hàng và theo
+            dõi tổng tiền.
+          </p> -->
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-link" data-page="dashboard" href="/dashboard">
+            <span>Tổng quan</span>
+            <span>01</span>
+          </a>
+          <a class="nav-link" data-page="categories" href="/categories">
+            <span>Danh mục</span>
+            <span>02</span>
+          </a>
+          <a class="nav-link" data-page="products" href="/products">
+            <span>Sản phẩm</span>
+            <span>03</span>
+          </a>
+          <a class="nav-link" data-page="customers" href="/customers">
+            <span>Khách hàng</span>
+            <span>04</span>
+          </a>
+          <a class="nav-link" data-page="orders" href="/orders">
+            <span>Đơn hàng</span>
+            <span>05</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p class="eyebrow">Đường dẫn</p>
+          <small><code>GET/POST/PUT/DELETE /api/orders</code></small>
+          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="page-hero">
+          <div>
+            <p class="eyebrow">CRUD Đơn hàng</p>
+            <h1>Thêm đơn và cập nhật trạng thái giao dịch</h1>
+            <p>
+              Đơn hàng là bộ dữ liệu tổng hợp: liên kết khách hàng và sản phẩm,
+              tính tổng tiền từ danh sách mặt hàng trong form.
+            </p>
+          </div>
+          <div class="hero-pill">Bộ dữ liệu: <code>orders</code></div>
+        </section>
+
+        <section class="content-grid two-columns">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Biểu mẫu</p>
+                <h2 id="orderFormTitle">Tạo đơn hàng mới</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <form id="orderForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="orderCustomer">Khách hàng</label>
+                    <select id="orderCustomer" name="customer" required></select>
+                  </div>
+
+                  <div class="field">
+                    <label for="orderStatus">Trạng thái đơn</label>
+                    <select id="orderStatus" name="status">
+                      <option value="pending">Chờ xử lý</option>
+                      <option value="confirmed">Đã xác nhận</option>
+                      <option value="shipping">Đang giao</option>
+                      <option value="completed">Hoàn thành</option>
+                      <option value="cancelled">Đã hủy</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="orderPaymentMethod">Thanh toán</label>
+                    <select id="orderPaymentMethod" name="paymentMethod">
+                      <option value="cod">COD</option>
+                      <option value="bank_transfer">Chuyển khoản</option>
+                      <option value="momo">MoMo</option>
+                      <option value="card">Thẻ ngân hàng</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="orderDate">Ngày đặt</label>
+                    <input id="orderDate" name="orderDate" type="date" required />
+                  </div>
+
+                  <div class="field full">
+                    <label for="orderShippingAddress">Địa chỉ giao hàng</label>
+                    <input
+                      id="orderShippingAddress"
+                      name="shippingAddress"
+                      placeholder="Địa chỉ giao đến"
+                      required
+                    />
+                  </div>
+
+                  <div class="field full">
+                    <label for="orderNote">Ghi chú</label>
+                    <textarea id="orderNote" name="note" placeholder="Ghi chú giao hàng, ghi chú đơn hàng"></textarea>
+                  </div>
+                </div>
+
+                <div class="items-builder">
+                  <div class="builder-head">
+                    <div>
+                      <p class="eyebrow">Danh sách mua</p>
+                      <h3>Sản phẩm trong đơn</h3>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="addOrderItemButton" type="button">
+                      Thêm dòng sản phẩm
+                    </button>
+                  </div>
+
+                  <div class="builder-grid" id="orderItemsBuilder"></div>
+                  <p class="helper-text">
+                    Mỗi dòng gồm sản phẩm và số lượng. Đơn giá được lấy từ giá hiện tại của sản phẩm.
+                  </p>
+                </div>
+
+                <div class="button-row">
+                  <button class="btn btn-primary" id="orderSubmitButton" type="submit">
+                    Lưu đơn hàng
+                  </button>
+                  <button class="btn btn-secondary" id="orderCancelButton" type="button">
+                    Hủy chỉnh sửa
+                  </button>
+                </div>
+              </form>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Tổng hợp</p>
+                <h2>Xem nhanh giá trị đơn</h2>
+              </div>
+            </div>
+            <div class="panel-body inline-summary">
+              <div class="summary-row">
+                <span>Số mặt hàng</span>
+                <strong id="orderItemsCount">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>Tạm tính</span>
+                <strong id="orderPreviewTotal">0 đ</strong>
+              </div>
+              <div class="summary-row">
+                <span>Khách hàng được chọn</span>
+                <strong id="orderPreviewCustomer">Chưa chọn</strong>
+              </div>
+
+              <ul class="tips-list">
+                <li>Bạn nên tạo sản phẩm và khách hàng trước khi tạo đơn để có dữ liệu tham chiếu.</li>
+                <li>Khi bấm sửa, các dòng sản phẩm cũ sẽ được nạp lại vào form để cập nhật.</li>
+                <li>Tổng tiền được backend tính lại để đảm bảo tính nhất quán dữ liệu.</li>
+              </ul>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Danh sách</p>
+              <h2>Lịch sử đơn hàng</h2>
+            </div>
+          </div>
+          <div class="panel-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Sản phẩm</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Thanh toán</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="orderTableBody">
+                <tr>
+                  <td colspan="7" class="empty-cell">Đang tải dữ liệu...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/shared.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/orders.js"></script>
+  </body>
+</html>

@@ -1,0 +1,393 @@
+{
+  "info": {
+    "name": "Quản Lý Bán Hàng Online",
+    "description": "Bộ request Postman để kiểm thử trang tổng quan và CRUD cho categories, products, customers, orders.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "categoryId",
+      "value": "REPLACE_CATEGORY_ID"
+    },
+    {
+      "key": "productId",
+      "value": "REPLACE_PRODUCT_ID"
+    },
+    {
+      "key": "customerId",
+      "value": "REPLACE_CUSTOMER_ID"
+    },
+    {
+      "key": "orderId",
+      "value": "REPLACE_ORDER_ID"
+    }
+  ],
+  "item": [
+    {
+      "name": "Xác thực",
+      "item": [
+        {
+          "name": "Đăng nhập admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Đăng nhập user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user\",\n  \"password\": \"user123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Thông tin phiên hiện tại",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Đăng xuất",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Sản phẩm cho trang bán hàng",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/store/products"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tổng quan",
+      "item": [
+        {
+          "name": "Thống kê tổng quan",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/stats"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Danh mục",
+      "item": [
+        {
+          "name": "Lấy tất cả danh mục",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/categories"
+          }
+        },
+        {
+          "name": "Lấy 1 danh mục theo ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Tạo danh mục",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Điện tử\",\n  \"description\": \"Các sản phẩm công nghệ và phụ kiện\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/categories"
+          }
+        },
+        {
+          "name": "Cập nhật danh mục",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Điện tử thông minh\",\n  \"description\": \"Nhóm hàng công nghệ cập nhật\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Xóa danh mục",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/categories/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sản phẩm",
+      "item": [
+        {
+          "name": "Lấy tất cả sản phẩm",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/products"
+          }
+        },
+        {
+          "name": "Lấy 1 sản phẩm theo ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/products/{{productId}}"
+          }
+        },
+        {
+          "name": "Tạo sản phẩm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tai nghe Bluetooth X1\",\n  \"sku\": \"PRD-001\",\n  \"category\": \"{{categoryId}}\",\n  \"price\": 790000,\n  \"stock\": 30,\n  \"description\": \"Tai nghe không dây pin 20 giờ\",\n  \"imageUrl\": \"https://example.com/headphone.jpg\",\n  \"status\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/products"
+          }
+        },
+        {
+          "name": "Cập nhật sản phẩm",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tai nghe Bluetooth X1 Pro\",\n  \"sku\": \"PRD-001\",\n  \"category\": \"{{categoryId}}\",\n  \"price\": 890000,\n  \"stock\": 25,\n  \"description\": \"Phiên bản nâng cấp có chống ồn\",\n  \"imageUrl\": \"https://example.com/headphone-pro.jpg\",\n  \"status\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/products/{{productId}}"
+          }
+        },
+        {
+          "name": "Xóa sản phẩm",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/products/{{productId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Khách hàng",
+      "item": [
+        {
+          "name": "Lấy tất cả khách hàng",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers"
+          }
+        },
+        {
+          "name": "Lấy 1 khách hàng theo ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers/{{customerId}}"
+          }
+        },
+        {
+          "name": "Tạo khách hàng",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyễn Văn A\",\n  \"email\": \"nguyenvana@example.com\",\n  \"phone\": \"0901234567\",\n  \"city\": \"TP. Hồ Chí Minh\",\n  \"address\": \"12 Nguyễn Trãi, Quận 1\",\n  \"notes\": \"Khách hàng thân thiết\",\n  \"status\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/customers"
+          }
+        },
+        {
+          "name": "Cập nhật khách hàng",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyễn Văn A\",\n  \"email\": \"nguyenvana@example.com\",\n  \"phone\": \"0988888888\",\n  \"city\": \"TP. Hồ Chí Minh\",\n  \"address\": \"88 Võ Văn Tần, Quận 3\",\n  \"notes\": \"Đã cập nhật số điện thoại\",\n  \"status\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/customers/{{customerId}}"
+          }
+        },
+        {
+          "name": "Xóa khách hàng",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/customers/{{customerId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Đơn hàng",
+      "item": [
+        {
+          "name": "Lấy tất cả đơn hàng",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders"
+          }
+        },
+        {
+          "name": "Lấy 1 đơn hàng theo ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders/{{orderId}}"
+          }
+        },
+        {
+          "name": "Tạo đơn hàng",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer\": \"{{customerId}}\",\n  \"status\": \"pending\",\n  \"paymentMethod\": \"cod\",\n  \"shippingAddress\": \"12 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh\",\n  \"note\": \"Giao giờ hành chính\",\n  \"orderDate\": \"2026-04-16\",\n  \"items\": [\n    {\n      \"product\": \"{{productId}}\",\n      \"quantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          }
+        },
+        {
+          "name": "Cập nhật đơn hàng",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer\": \"{{customerId}}\",\n  \"status\": \"confirmed\",\n  \"paymentMethod\": \"bank_transfer\",\n  \"shippingAddress\": \"88 Võ Văn Tần, Quận 3, TP. Hồ Chí Minh\",\n  \"note\": \"Khách đã chuyển khoản\",\n  \"orderDate\": \"2026-04-16\",\n  \"items\": [\n    {\n      \"product\": \"{{productId}}\",\n      \"quantity\": 3\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders/{{orderId}}"
+          }
+        },
+        {
+          "name": "Xóa đơn hàng",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/orders/{{orderId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

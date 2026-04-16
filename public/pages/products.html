@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Sản Phẩm</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body data-page="products">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Bộ dữ liệu 02</p>
+          <h2>Sản Phẩm</h2>
+          <!-- <p>
+            Quản lý giá bán, tồn kho, SKU và liên kết đến danh mục trong MongoDB.
+          </p> -->
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-link" data-page="dashboard" href="/dashboard">
+            <span>Tổng quan</span>
+            <span>01</span>
+          </a>
+          <a class="nav-link" data-page="categories" href="/categories">
+            <span>Danh mục</span>
+            <span>02</span>
+          </a>
+          <a class="nav-link" data-page="products" href="/products">
+            <span>Sản phẩm</span>
+            <span>03</span>
+          </a>
+          <a class="nav-link" data-page="customers" href="/customers">
+            <span>Khách hàng</span>
+            <span>04</span>
+          </a>
+          <a class="nav-link" data-page="orders" href="/orders">
+            <span>Đơn hàng</span>
+            <span>05</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p class="eyebrow">Đường dẫn</p>
+          <small><code>GET/POST/PUT/DELETE /api/products</code></small>
+          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="page-hero">
+          <div>
+            <p class="eyebrow">CRUD Sản phẩm</p>
+            <h1>Quản lý mặt hàng kinh doanh</h1>
+            <p>
+              Form này gồm đầy đủ các thuộc tính cơ bản cho một sản phẩm online:
+              tên, SKU, giá, tồn kho, danh mục và mô tả.
+            </p>
+          </div>
+          <div class="hero-pill">Bộ dữ liệu: <code>products</code></div>
+        </section>
+
+        <section class="content-grid two-columns">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Biểu mẫu</p>
+                <h2 id="productFormTitle">Thêm sản phẩm mới</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <form id="productForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="productName">Tên sản phẩm</label>
+                    <input id="productName" name="name" placeholder="Ví dụ: Tai nghe Bluetooth" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="productSku">SKU</label>
+                    <input id="productSku" name="sku" placeholder="PRD-001" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="productCategory">Danh mục</label>
+                    <select id="productCategory" name="category" required></select>
+                  </div>
+
+                  <div class="field">
+                    <label for="productStatus">Trạng thái</label>
+                    <select id="productStatus" name="status">
+                      <option value="active">Đang bán</option>
+                      <option value="inactive">Tạm ngưng</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="productPrice">Giá bán</label>
+                    <input id="productPrice" name="price" type="number" min="0" step="1000" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="productStock">Tồn kho</label>
+                    <input id="productStock" name="stock" type="number" min="0" required />
+                  </div>
+
+                  <div class="field full">
+                    <label for="productImageFile">Hình ảnh sản phẩm</label>
+                    <input
+                      id="productImageFile"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      placeholder="Chọn hình ảnh"
+                    />
+                    <small class="muted">Hỗ trợ: JPG, PNG, GIF, WebP (Tối đa 5MB)</small>
+                  </div>
+
+                  <div class="field full">
+                    <label for="productImageUrl">Link hình ảnh (tùy chọn)</label>
+                    <input id="productImageUrl" name="imageUrl" placeholder="https://..." />
+                    <small class="muted">Hoặc nhập link hình ảnh nếu không upload file</small>
+                  </div>
+
+                  <div class="field full">
+                    <label for="productDescription">Mô tả sản phẩm</label>
+                    <textarea
+                      id="productDescription"
+                      name="description"
+                      placeholder="Mô tả ngắn cho sản phẩm"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <div class="button-row">
+                  <button class="btn btn-primary" id="productSubmitButton" type="submit">
+                    Lưu sản phẩm
+                  </button>
+                  <button class="btn btn-secondary" id="productCancelButton" type="button">
+                    Hủy chỉnh sửa
+                  </button>
+                </div>
+              </form>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Thông tin nhanh</p>
+                <h2>Kiểm tra đầu vào</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <ul class="tips-list">
+                <li>SKU là trường duy nhất, phù hợp để demo ràng buộc unique trong MongoDB.</li>
+                <li>Bạn cần tạo ít nhất một danh mục trước khi thêm sản phẩm để chọn category.</li>
+                <li>Tồn kho thấp sẽ được đưa lên trang dashboard để cảnh báo.</li>
+              </ul>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Danh sách</p>
+              <h2>Sản phẩm hiện có</h2>
+            </div>
+          </div>
+          <div class="panel-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>SKU</th>
+                  <th>Danh mục</th>
+                  <th>Giá</th>
+                  <th>Tồn kho</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody">
+                <tr>
+                  <td colspan="7" class="empty-cell">Đang tải dữ liệu...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/shared.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/products.js"></script>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Bán Hàng Online</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body data-page="dashboard">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Điều phối bán hàng</p>
+          <h2>Trang quản trị cửa hàng</h2>
+          <!-- <p>
+            Bộ dashboard mini để quản lý danh mục, sản phẩm, khách hàng và đơn
+            hàng trên một giao diện HTML/CSS/JS thuần.
+          </p> -->
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-link" data-page="dashboard" href="/dashboard">
+            <span>Tổng quan</span>
+            <span>01</span>
+          </a>
+          <a class="nav-link" data-page="categories" href="/categories">
+            <span>Danh mục</span>
+            <span>02</span>
+          </a>
+          <a class="nav-link" data-page="products" href="/products">
+            <span>Sản phẩm</span>
+            <span>03</span>
+          </a>
+          <a class="nav-link" data-page="customers" href="/customers">
+            <span>Khách hàng</span>
+            <span>04</span>
+          </a>
+          <a class="nav-link" data-page="orders" href="/orders">
+            <span>Đơn hàng</span>
+            <span>05</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p class="eyebrow">Phiên đăng nhập</p>
+          <small><strong data-auth-name>Đang tải...</strong></small>
+          <small data-auth-role>Đang tải quyền...</small>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="page-hero">
+          <div>
+            <p class="eyebrow">Quản trị bán hàng</p>
+            <h1>Trang tổng quan cho cửa hàng online</h1>
+            <p>
+              Trang tổng quan này hiển thị các chỉ số chính, đơn hàng gần đây
+              và cảnh báo tồn kho thấp để bạn thao tác nhanh với các trang CRUD.
+            </p>
+          </div>
+          <div class="hero-pill">API: <code>/api/dashboard/stats</code></div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="panel stat-card accent">
+            <p class="eyebrow">Doanh thu</p>
+            <span class="value" id="totalRevenue">0 đ</span>
+            <p class="subtext">Tổng doanh thu của các đơn không bị hủy.</p>
+          </article>
+          <article class="panel stat-card">
+            <p class="eyebrow">Danh mục</p>
+            <span class="value" id="countCategories">0</span>
+            <p class="subtext">Nhóm sản phẩm đang được quản lý.</p>
+          </article>
+          <article class="panel stat-card">
+            <p class="eyebrow">Sản phẩm</p>
+            <span class="value" id="countProducts">0</span>
+            <p class="subtext">Toàn bộ mặt hàng trên hệ thống.</p>
+          </article>
+          <article class="panel stat-card">
+            <p class="eyebrow">Khách hàng & Đơn</p>
+            <span class="value" id="countCustomersOrders">0 / 0</span>
+            <p class="subtext">Số lượng khách hàng và đơn hàng hiện có.</p>
+          </article>
+        </section>
+
+        <section class="quick-links">
+          <a class="panel quick-card" href="/categories">
+            <p class="eyebrow">Trang CRUD</p>
+            <h3>Quản lý danh mục</h3>
+            <p>Tạo, sửa, xóa và xem danh mục để phân loại sản phẩm.</p>
+          </a>
+          <a class="panel quick-card" href="/products">
+            <p class="eyebrow">Trang CRUD</p>
+            <h3>Quản lý sản phẩm</h3>
+            <p>Cập nhật thông tin, tồn kho, giá bán và trạng thái kinh doanh.</p>
+          </a>
+          <a class="panel quick-card" href="/customers">
+            <p class="eyebrow">Trang CRUD</p>
+            <h3>Quản lý khách hàng</h3>
+            <p>Lưu thông tin liên hệ và lịch sử đặt mua của khách hàng.</p>
+          </a>
+          <a class="panel quick-card" href="/orders">
+            <p class="eyebrow">Trang CRUD</p>
+            <h3>Quản lý đơn hàng</h3>
+            <p>Thêm sản phẩm vào đơn, cập nhật trạng thái và theo dõi thành tiền.</p>
+          </a>
+        </section>
+
+        <section class="two-panels">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Gần đây</p>
+                <h2>Đơn hàng gần đây</h2>
+              </div>
+            </div>
+            <div class="panel-body table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersBody">
+                  <tr>
+                    <td colspan="5" class="empty-cell">Đang tải dữ liệu...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Cảnh báo</p>
+                <h2>Tồn kho thấp</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="revenue-box">
+                <p class="eyebrow">Nhớ thao tác</p>
+                <strong id="lowStockCount">0 sản phẩm</strong>
+                <p class="helper-text">
+                  Các mặt hàng dưới 10 sản phẩm tồn kho sẽ hiện ở danh sách bên
+                  dưới.
+                </p>
+              </div>
+
+              <ul class="simple-list" id="lowStockList">
+                <li>Đang tải dữ liệu...</li>
+              </ul>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/shared.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/dashboard.js"></script>
+  </body>
+</html>
