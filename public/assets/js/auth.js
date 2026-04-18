@@ -28,8 +28,6 @@
       button.addEventListener("click", async () => {
         try {
           await api.logout();
-        } catch (error) {
-          console.error(error);
         } finally {
           window.location.replace("/login");
         }

@@ -60,20 +60,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", redirectIfAuthenticated, sendPage("login.html"));
+app.get("/register", redirectIfAuthenticated, sendPage("register.html"));
 app.get("/dashboard", requirePageRole("admin"), sendPage("index.html"));
 app.get("/categories", requirePageRole("admin"), sendPage("pages", "categories.html"));
 app.get("/products", requirePageRole("admin"), sendPage("pages", "products.html"));
 app.get("/customers", requirePageRole("admin"), sendPage("pages", "customers.html"));
 app.get("/orders", requirePageRole("admin"), sendPage("pages", "orders.html"));
 app.get("/shop", requirePageRole("user"), sendPage("shop.html"));
-
-app.get("/pages/categories.html", requirePageRole("admin"), sendPage("pages", "categories.html"));
-app.get("/pages/products.html", requirePageRole("admin"), sendPage("pages", "products.html"));
-app.get("/pages/customers.html", requirePageRole("admin"), sendPage("pages", "customers.html"));
-app.get("/pages/orders.html", requirePageRole("admin"), sendPage("pages", "orders.html"));
-app.get("/index.html", requirePageRole("admin"), sendPage("index.html"));
-app.get("/shop.html", requirePageRole("user"), sendPage("shop.html"));
-app.get("/login.html", redirectIfAuthenticated, sendPage("login.html"));
 
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith("/api")) {
@@ -131,7 +124,6 @@ app.use((error, req, res, next) => {
     });
   }
 
-  console.error(error);
   return res.status(statusCode).json({
     success: false,
     message: error.message || "Có lỗi xảy ra trên server.",

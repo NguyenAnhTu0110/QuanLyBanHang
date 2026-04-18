@@ -55,13 +55,18 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "shipping", "completed", "cancelled"],
-      default: "pending",
+      enum: ["preparing", "shipping", "success", "cancelled"],
+      default: "preparing",
     },
     paymentMethod: {
       type: String,
-      enum: ["cod", "bank_transfer", "momo", "card"],
+      enum: ["cod", "bank_transfer", "card"],
       default: "cod",
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "received"],
+      default: "pending",
     },
     shippingAddress: {
       type: String,

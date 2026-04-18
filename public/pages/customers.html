@@ -10,12 +10,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <p class="eyebrow">Bộ dữ liệu 03</p>
+          <p class="eyebrow">Quản lý khách hàng</p>
           <h2>Khách Hàng</h2>
-          <!-- <p>
-            Lưu họ tên, email, số điện thoại và địa chỉ giao hàng cho hệ thống
-            bán hàng online.
-          </p> -->
         </div>
 
         <nav class="nav-menu">
@@ -43,7 +39,7 @@
 
         <div class="sidebar-footer">
           <p class="eyebrow">Đường dẫn</p>
-          <small><code>GET/POST/PUT/DELETE /api/customers</code></small>
+          <small><code>GET /api/customers</code></small>
           <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
           <div class="button-row">
             <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
@@ -56,11 +52,11 @@
       <main class="content">
         <section class="page-hero">
           <div>
-            <p class="eyebrow">CRUD Khách hàng</p>
+            <p class="eyebrow">Xem danh sách khách hàng</p>
             <h1>Quản lý thông tin người mua</h1>
             <p>
-              Trang này phục vụ cho việc thêm mới, cập nhật và xóa thông tin
-              khách hàng, đồng thời email được đặt unique để tránh trùng lặp.
+              Khách hàng được tạo tự động khi người dùng đăng ký. Bạn không thể tạo/sửa/xóa khách hàng thủ công.
+              Hệ thống giữ dữ liệu khách hàng đồng bộ với tài khoản đăng nhập.
             </p>
           </div>
           <div class="hero-pill">Bộ dữ liệu: <code>customers</code></div>
@@ -70,65 +66,16 @@
           <article class="panel">
             <div class="panel-header">
               <div>
-                <p class="eyebrow">Biểu mẫu</p>
-                <h2 id="customerFormTitle">Thêm khách hàng mới</h2>
+                <p class="eyebrow">Chính sách dữ liệu</p>
+                <h2>Dữ liệu khách hàng tự động</h2>
               </div>
             </div>
             <div class="panel-body">
-              <form id="customerForm">
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="customerFullName">Họ tên</label>
-                    <input id="customerFullName" name="fullName" placeholder="Nguyễn Văn A" required />
-                  </div>
-
-                  <div class="field">
-                    <label for="customerPhone">Số điện thoại</label>
-                    <input id="customerPhone" name="phone" placeholder="09xxxxxxxx" required />
-                  </div>
-
-                  <div class="field">
-                    <label for="customerEmail">Email</label>
-                    <input id="customerEmail" name="email" type="email" placeholder="khach@email.com" required />
-                  </div>
-
-                  <div class="field">
-                    <label for="customerCity">Thành phố</label>
-                    <input id="customerCity" name="city" placeholder="TP. Hồ Chí Minh" />
-                  </div>
-
-                  <div class="field full">
-                    <label for="customerAddress">Địa chỉ</label>
-                    <input id="customerAddress" name="address" placeholder="123 Nguyễn Trãi, Quận 1" />
-                  </div>
-
-                  <div class="field full">
-                    <label for="customerNotes">Ghi chú</label>
-                    <textarea
-                      id="customerNotes"
-                      name="notes"
-                      placeholder="Thông tin bổ sung về khách hàng"
-                    ></textarea>
-                  </div>
-
-                  <div class="field full">
-                    <label for="customerStatus">Trạng thái</label>
-                    <select id="customerStatus" name="status">
-                      <option value="active">Đang hoạt động</option>
-                      <option value="inactive">Tạm khóa</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="button-row">
-                  <button class="btn btn-primary" id="customerSubmitButton" type="submit">
-                    Lưu khách hàng
-                  </button>
-                  <button class="btn btn-secondary" id="customerCancelButton" type="button">
-                    Hủy chỉnh sửa
-                  </button>
-                </div>
-              </form>
+              <ul class="tips-list">
+                <li>Khách hàng được tạo tự động ngay khi đăng ký tài khoản.</li>
+                <li>Họ tên và địa chỉ được đồng bộ khi người dùng cập nhật trước bước mua hàng.</li>
+                <li>Admin chỉ xem dữ liệu, không thêm/sửa/xóa thủ công.</li>
+              </ul>
             </div>
           </article>
 
@@ -182,6 +129,7 @@
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/shared.js"></script>
     <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/addresses.js"></script>
     <script src="/assets/js/customers.js"></script>
   </body>
 </html>

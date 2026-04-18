@@ -11,8 +11,22 @@ const userSchema = new mongoose.Schema(
     },
     fullName: {
       type: String,
-      required: [true, "Họ tên là bắt buộc."],
+      default: "",
       trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email là bắt buộc."],
+      trim: true,
+      lowercase: true,
+      unique: true,
+      match: [/^\S+@\S+\.\S+$/, "Email không hợp lệ."],
+    },
+    phone: {
+      type: String,
+      required: [true, "Số điện thoại là bắt buộc."],
+      trim: true,
+      match: [/^[0-9]{10,11}$/, "Số điện thoại phải từ 10-11 chữ số."],
     },
     passwordHash: {
       type: String,

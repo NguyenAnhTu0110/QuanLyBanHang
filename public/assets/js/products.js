@@ -6,9 +6,11 @@
   const submitButton = document.getElementById("productSubmitButton");
   const cancelButton = document.getElementById("productCancelButton");
   const categorySelect = document.getElementById("productCategory");
+  const imageFileInput = document.getElementById("productImageFile");
   let editingId = null;
   let categories = [];
   let products = [];
+  let previewUrl = "";
 
   const renderStatus = (status) =>
     status === "active"
@@ -30,6 +32,10 @@
     formTitle.textContent = "Thêm sản phẩm mới";
     submitButton.textContent = "Lưu sản phẩm";
     populateCategoryOptions();
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      previewUrl = "";
+    }
   };
 
   const renderTable = () => {
@@ -88,8 +94,8 @@
     form.status.value = product.status || "active";
     form.price.value = product.price ?? "";
     form.stock.value = product.stock ?? 0;
-    form.imageFile.value = ""; // Reset file input
-    form.imageUrl.value = product.imageUrl || "";
+    form.image.value = "";
+    form.imageUrl.value = product.imageUrl || product.image || "";
     form.description.value = product.description || "";
     formTitle.textContent = `Cập nhật: ${product.name}`;
     submitButton.textContent = "Cập nhật sản phẩm";
@@ -104,49 +110,83 @@
       return;
     }
 
-    const imageFile = form.imageFile.files[0];
-    let requestPromise;
-
-    // Kiểm tra xem có file được chọn không
-    if (imageFile) {
-      // Sử dụng FormData để upload file
-      const formData = new FormData();
-      formData.append("name", form.name.value.trim());
-      formData.append("sku", form.sku.value.trim());
-      formData.append("category", form.category.value);
-      formData.append("status", form.status.value);
-      formData.append("price", Number(form.price.value));
-      formData.append("stock", Number(form.stock.value));
-      formData.append("image", imageFile);
-      formData.append("imageUrl", form.imageUrl.value.trim());
-      formData.append("description", form.description.value.trim());
-
-      if (editingId) {
-        requestPromise = api.updateWithFile(resource, editingId, formData);
-      } else {
-        requestPromise = api.createWithFile(resource, formData);
-      }
-    } else {
-      // Sử dụng JSON API bình thường nếu không có file
-      const payload = {
-        name: form.name.value.trim(),
-        sku: form.sku.value.trim(),
-        category: form.category.value,
-        status: form.status.value,
-        price: Number(form.price.value),
-        stock: Number(form.stock.value),
-        imageUrl: form.imageUrl.value.trim(),
-        description: form.description.value.trim(),
-      };
-
-      if (editingId) {
-        requestPromise = api.update(resource, editingId, payload);
-      } else {
-        requestPromise = api.create(resource, payload);
-      }
+    // Validate required fields
+    if (!form.name.value.trim()) {
+      app.showToast("Vui lòng nhập tên sản phẩm.", "error");
+      form.name.focus();
+      return;
     }
 
+    if (!form.sku.value.trim()) {
+      app.showToast("Vui lòng nhập SKU.", "error");
+      form.sku.focus();
+      return;
+    }
+
+    if (!form.category.value) {
+      app.showToast("Vui lòng chọn danh mục.", "error");
+      form.category.focus();
+      return;
+    }
+
+    if (!form.price.value || Number(form.price.value) <= 0) {
+      app.showToast("Giá bán phải lớn hơn 0.", "error");
+      form.price.focus();
+      return;
+    }
+
+    if (!form.stock.value && form.stock.value !== "0") {
+      app.showToast("Vui lòng nhập số lượng tồn kho.", "error");
+      form.stock.focus();
+      return;
+    }
+
+    submitButton.disabled = true;
+
+    const imageFile = form.image.files[0];
+    let requestPromise;
+
     try {
+      // Kiểm tra xem có file được chọn không
+      if (imageFile) {
+        // Sử dụng FormData để upload file
+        const formData = new FormData();
+        formData.append("name", form.name.value.trim());
+        formData.append("sku", form.sku.value.trim());
+        formData.append("category", form.category.value);
+        formData.append("status", form.status.value);
+        formData.append("price", form.price.value);
+        formData.append("stock", form.stock.value);
+        formData.append("image", imageFile);
+        formData.append("imageUrl", form.imageUrl.value.trim());
+        formData.append("description", form.description.value.trim());
+
+        if (editingId) {
+          requestPromise = api.updateWithFile(resource, editingId, formData);
+        } else {
+          requestPromise = api.createWithFile(resource, formData);
+        }
+      } else {
+        // Sử dụng JSON API bình thường nếu không có file
+        const payload = {
+          name: form.name.value.trim(),
+          sku: form.sku.value.trim(),
+          category: form.category.value,
+          status: form.status.value,
+          price: Number(form.price.value),
+          stock: Number(form.stock.value),
+          imageUrl: form.imageUrl.value.trim(),
+          description: form.description.value.trim(),
+        };
+
+        if (editingId) {
+          requestPromise = api.update(resource, editingId, payload);
+        } else {
+          delete payload.id;
+          requestPromise = api.create(resource, payload);
+        }
+      }
+
       await requestPromise;
       app.showToast(
         editingId ? "Cập nhật sản phẩm thành công." : "Thêm sản phẩm thành công."
@@ -156,6 +196,8 @@
       await loadData();
     } catch (error) {
       app.showToast(error.message, "error");
+    } finally {
+      submitButton.disabled = false;
     }
   });
 
@@ -195,6 +237,16 @@
   });
 
   cancelButton.addEventListener("click", resetForm);
+  imageFileInput.addEventListener("change", () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      previewUrl = "";
+    }
+    const selected = imageFileInput.files?.[0];
+    if (!selected) return;
+    previewUrl = URL.createObjectURL(selected);
+    app.showToast(`Đã chọn ảnh: ${selected.name}`);
+  });
 
   document.addEventListener("DOMContentLoaded", async () => {
     const user = await auth.protectPage({ roles: ["admin"] });

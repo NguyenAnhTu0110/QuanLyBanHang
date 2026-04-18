@@ -9,38 +9,17 @@
   <body data-page="login">
     <main class="auth-shell">
       <section class="auth-layout">
-        <article class="auth-panel">
-          <p class="eyebrow">Quản lý bán hàng online</p>
-          <h1>Đăng nhập theo vai trò</h1>
-          <p>
-            Hệ thống có hai luồng sử dụng riêng: quản trị viên sẽ vào khu vực
-            dashboard để CRUD dữ liệu, còn người dùng sẽ vào trang web bán hàng
-            để xem các sản phẩm đang kinh doanh.
-          </p>
-
-          <div class="credential-grid">
-            <div class="credential-card">
-              <strong>Tài khoản quản trị</strong>
-              <span>Tên đăng nhập: <code>admin</code></span><br />
-              <span>Mật khẩu: <code>admin123</code></span>
-            </div>
-
-            <div class="credential-card">
-              <strong>Tài khoản người dùng</strong>
-              <span>Tên đăng nhập: <code>user</code></span><br />
-              <span>Mật khẩu: <code>user123</code></span>
-            </div>
-          </div>
-
-          <div class="auth-note">
-            Đăng nhập admin sẽ được chuyển thẳng tới dashboard quản trị. Đăng
-            nhập user sẽ được chuyển tới trang web bán hàng.
+        <article class="auth-panel auth-welcome">
+          <div class="welcome-content">
+            <img src="/img/logo_smarthub.svg" alt="SmartHub" class="logo" />
+            <h1>CHÀO MỪNG ĐẾN VỚI</h1>
+            <h2>SMARTHUB</h2>
+            <p>Hệ thống quản lý bán hàng trực tuyến hiện đại</p>
           </div>
         </article>
 
         <article class="auth-panel">
-          <p class="eyebrow">Biểu mẫu đăng nhập</p>
-          <h2>Chào mừng quay lại</h2>
+          <p class="eyebrow">ĐĂNG NHẬP TÀI KHOẢN</p>
 
           <form id="loginForm">
             <div class="form-grid">
@@ -67,6 +46,11 @@
               </button>
             </div>
           </form>
+          <div class="auth-footer">
+            <p>
+              Chưa có tài khoản? <a href="/register">Đăng ký tại đây</a>
+            </p>
+          </div>
         </article>
       </section>
     </main>
@@ -75,5 +59,64 @@
     <script src="/assets/js/shared.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/login.js"></script>
+
+    <style>
+      .auth-welcome {
+        background: #f5f5f5;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .welcome-content {
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .welcome-content .logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 24px;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+      }
+
+      .welcome-content h1 {
+        font-size: 1.4em;
+        margin: 0 0 8px 0;
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .welcome-content h2 {
+        font-size: 2.5em;
+        margin: 0 0 16px 0;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #667eea;
+      }
+
+      .welcome-content p {
+        font-size: 0.95em;
+        color: #666;
+        margin: 0;
+      }
+
+      .auth-footer {
+        text-align: center;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      }
+
+      .auth-footer a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+
+      .auth-footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
   </body>
 </html>

@@ -37,7 +37,14 @@
         window.location.replace("/login");
       }
 
-      throw new Error(payload.message || "Không thể xử lý yêu cầu.");
+      const error = new Error(payload.message || "Không thể xử lý yêu cầu.");
+      if (payload && typeof payload === "object") {
+        error.payload = payload;
+        if (Array.isArray(payload.errors)) {
+          error.errors = payload.errors;
+        }
+      }
+      throw error;
     }
 
     return payload;
@@ -47,6 +54,11 @@
     request,
     login: (body) =>
       request("/auth/login", {
+        method: "POST",
+        body,
+      }),
+    register: (body) =>
+      request("/auth/register", {
         method: "POST",
         body,
       }),
@@ -85,6 +97,33 @@
     remove: (resource, id) =>
       request(`/${resource}/${id}`, {
         method: "DELETE",
+      }),
+    // Store/Customer endpoints
+    getCustomer: () => request("/store/customer"),
+    updateCustomer: (body) =>
+      request("/store/customer", {
+        method: "PUT",
+        body,
+      }),
+    getProvinces: () => request("/store/addresses/provinces"),
+    getDistricts: (provinceId) =>
+      request(`/store/addresses/districts/${provinceId}`),
+    getWards: (districtId) =>
+      request(`/store/addresses/wards/${districtId}`),
+    createOrder: (body) =>
+      request("/store/orders", {
+        method: "POST",
+        body,
+      }),
+    updateOrderPaymentStatus: (orderId, paymentStatus) =>
+      request(`/orders/${orderId}/payment-status`, {
+        method: "PATCH",
+        body: { paymentStatus },
+      }),
+    updateOrderDeliveryStatus: (orderId, status) =>
+      request(`/orders/${orderId}/delivery-status`, {
+        method: "PATCH",
+        body: { status },
       }),
   };
 })();

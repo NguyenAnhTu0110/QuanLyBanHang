@@ -7,13 +7,14 @@ const asyncHandler = require("../utils/asyncHandler");
 const orderPopulate = [
   {
     path: "customer",
-    select: "fullName email phone city",
+    select: "fullName email phone city addresses address",
   },
   {
     path: "items.product",
     select: "name sku price stock",
   },
 ];
+const deliveryStatuses = ["preparing", "shipping", "success", "cancelled"];
 
 const createHttpError = (message, statusCode = 400) => {
   const error = new Error(message);
@@ -79,13 +80,24 @@ const buildOrderPayload = async (payload, fallbackOrderCode) => {
     0
   );
 
+  const defaultCustomerAddress = Array.isArray(customer.addresses) && customer.addresses.length
+    ? [
+        customer.addresses[0].addressDetail,
+        customer.addresses[0].wardName,
+        customer.addresses[0].districtName,
+        customer.addresses[0].provinceName,
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : customer.address;
+
   return {
     orderCode: fallbackOrderCode || payload.orderCode || `ORD-${Date.now()}`,
     customer: payload.customer,
     items: normalizedItems,
-    status: payload.status || "pending",
+    status: payload.status || "preparing",
     paymentMethod: payload.paymentMethod || "cod",
-    shippingAddress: payload.shippingAddress || customer.address || "Chưa cập nhật",
+    shippingAddress: payload.shippingAddress || defaultCustomerAddress || "Chưa cập nhật",
     note: payload.note || "",
     orderDate: payload.orderDate || new Date(),
     totalAmount,
@@ -178,6 +190,81 @@ const deleteOrder = asyncHandler(async (req, res) => {
   });
 });
 
+// Cập nhật trạng thái thanh toán của đơn hàng
+const updatePaymentStatus = asyncHandler(async (req, res) => {
+  const { paymentStatus } = req.body;
+
+  if (!paymentStatus || !["pending", "received"].includes(paymentStatus)) {
+    return res.status(400).json({
+      success: false,
+      message: "Trạng thái thanh toán không hợp lệ.",
+    });
+  }
+
+  const existingOrder = await Order.findById(req.params.id);
+  if (!existingOrder) {
+    return res.status(404).json({
+      success: false,
+      message: "Không tìm thấy đơn hàng.",
+    });
+  }
+
+  if (existingOrder.paymentMethod === "cod") {
+    return res.status(400).json({
+      success: false,
+      message: "Đơn thanh toán tiền mặt không cần cập nhật trạng thái thu tiền.",
+    });
+  }
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { paymentStatus },
+    { new: true, runValidators: true }
+  ).populate(orderPopulate);
+
+  if (!order) {
+    return res.status(404).json({
+      success: false,
+      message: "Không tìm thấy đơn hàng.",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Cập nhật trạng thái thanh toán thành công.",
+    data: order,
+  });
+});
+
+const updateDeliveryStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+
+  if (!deliveryStatuses.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: "Trạng thái giao hàng không hợp lệ.",
+    });
+  }
+
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { status },
+    { new: true, runValidators: true }
+  ).populate(orderPopulate);
+
+  if (!order) {
+    return res.status(404).json({
+      success: false,
+      message: "Không tìm thấy đơn hàng.",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Cập nhật trạng thái giao hàng thành công.",
+    data: order,
+  });
+});
+
 const getDashboardStats = asyncHandler(async (req, res) => {
   const [categoryCount, productCount, customerCount, orderCount] = await Promise.all([
     Category.countDocuments(),
@@ -232,5 +319,7 @@ module.exports = {
   createOrder,
   updateOrder,
   deleteOrder,
+  updatePaymentStatus,
+  updateDeliveryStatus,
   getDashboardStats,
 };

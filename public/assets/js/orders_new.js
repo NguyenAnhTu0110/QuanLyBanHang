@@ -4,14 +4,28 @@
   let orders = [];
 
   const paymentMethodLabels = {
-    cod: "Tiền mặt",
+    cod: "COD",
     bank_transfer: "Chuyển khoản",
+    momo: "MoMo",
     card: "Thẻ ngân hàng",
   };
 
+  const orderStatusConfig = {
+    pending: ["Chờ xử lý", "warning"],
+    confirmed: ["Đã xác nhận", "neutral"],
+    shipping: ["Đang giao", "warning"],
+    completed: ["Hoàn thành", "success"],
+    cancelled: ["Đã hủy", "danger"],
+  };
+
   const paymentStatusConfig = {
-    pending: ["Chưa thu", "warning"],
-    received: ["Đã thu", "success"],
+    pending: ["Chưa thanh toán", "warning"],
+    received: ["Đã thanh toán", "success"],
+  };
+
+  const renderOrderStatus = (status) => {
+    const [label, variant] = orderStatusConfig[status] || [status || "Khác", "neutral"];
+    return app.badge(label, variant);
   };
 
   const renderPaymentStatus = (status) => {
@@ -21,38 +35,29 @@
 
   const renderOrderRow = (order) => {
     const customerName = order.customer?.fullName || "Khác";
-    const productNames = (order.items || [])
-      .map((item) => item.productName)
-      .filter(Boolean)
-      .join(", ");
+    const itemCount = order.items?.length || 0;
     const paymentMethod = paymentMethodLabels[order.paymentMethod] || order.paymentMethod;
+    
+    // Show payment status update button only for non-COD orders
     const isNonCOD = order.paymentMethod !== "cod";
     const paymentStatusCell = isNonCOD
-      ? renderPaymentStatus(order.paymentStatus || "pending")
-      : "Tiền mặt";
-    const deliveryControl = `
-      <select data-delivery-status="${order._id}">
-        <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>Đang chuẩn bị</option>
-        <option value="shipping" ${order.status === "shipping" ? "selected" : ""}>Đang giao</option>
-        <option value="success" ${order.status === "success" ? "selected" : ""}>Thành công</option>
-        <option value="cancelled" ${order.status === "cancelled" ? "selected" : ""}>Hủy hàng</option>
-      </select>
-    `;
+      ? `${renderPaymentStatus(order.paymentStatus || "pending")}`
+      : app.badge("N/A", "neutral");
 
     const actionButtons = isNonCOD
       ? `<button class="btn btn-secondary btn-sm" data-toggle-payment-status="${order._id}">
-           ${order.paymentStatus === "received" ? "Đã thu" : "Chưa thu"}
+           Cập nhật TT
          </button>`
-      : `<span class="muted">Tiền mặt</span>`;
+      : `<button class="btn btn-secondary btn-sm" disabled>Không cần</button>`;
 
     return `
       <tr data-order-id="${order._id}">
         <td><code>${app.escapeHtml(order.orderCode)}</code></td>
         <td>${app.escapeHtml(customerName)}</td>
-        <td>${app.escapeHtml(productNames || `${order.items?.length || 0} sản phẩm`)}</td>
+        <td>${itemCount} sản phẩm</td>
         <td><strong>${app.formatCurrency(order.totalAmount)}</strong></td>
         <td>${app.escapeHtml(paymentMethod)}</td>
-        <td>${deliveryControl}</td>
+        <td>${renderOrderStatus(order.status)}</td>
         <td>${paymentStatusCell}</td>
         <td>${actionButtons}</td>
       </tr>
@@ -70,7 +75,7 @@
     try {
       await api.updateOrderPaymentStatus(orderId, newStatus);
       app.showToast("Cập nhật trạng thái thanh toán thành công");
-      await loadOrders();
+      loadOrders();
     } catch (error) {
       app.showToast(error.message || "Lỗi cập nhật trạng thái", "error");
     }
@@ -86,7 +91,7 @@
 
     // Add event listeners for payment status update buttons
     tableBody.querySelectorAll("[data-toggle-payment-status]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
+      btn.addEventListener("click", async (e) => {
         const orderId = btn.dataset.togglePaymentStatus;
         const order = orders.find((o) => o._id === orderId);
         if (order) {
@@ -94,26 +99,12 @@
         }
       });
     });
-
-    tableBody.querySelectorAll("[data-delivery-status]").forEach((select) => {
-      select.addEventListener("change", async () => {
-        const orderId = select.dataset.deliveryStatus;
-        try {
-          await api.updateOrderDeliveryStatus(orderId, select.value);
-          app.showToast("Cập nhật trạng thái giao hàng thành công");
-          await loadOrders();
-        } catch (error) {
-          app.showToast(error.message || "Không thể cập nhật trạng thái giao hàng", "error");
-          await loadOrders();
-        }
-      });
-    });
   };
 
   const updateSummary = (orders) => {
     const totalCount = orders.length;
-    const pendingCount = orders.filter((o) => o.status === "preparing").length;
-    const completedCount = orders.filter((o) => o.status === "success").length;
+    const pendingCount = orders.filter((o) => o.status === "pending").length;
+    const completedCount = orders.filter((o) => o.status === "completed").length;
 
     document.getElementById("ordersTotalCount").textContent = totalCount;
     document.getElementById("ordersPendingCount").textContent = pendingCount;

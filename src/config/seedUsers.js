@@ -32,8 +32,6 @@ const seedDefaultUsers = async () => {
       isActive: true,
     });
   }
-
-  console.log("Đã kiểm tra tài khoản mẫu mặc định.");
 };
 
 module.exports = seedDefaultUsers;

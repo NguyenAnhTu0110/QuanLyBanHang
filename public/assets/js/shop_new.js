@@ -106,52 +106,6 @@
     const provinceSelect = document.getElementById("updateProvince");
     const districtSelect = document.getElementById("updateDistrict");
     const wardSelect = document.getElementById("updateWard");
-    const preloadCurrentAddress = async () => {
-      if (!currentCustomer.city || !currentCustomer.district || !currentCustomer.ward) {
-        return;
-      }
-
-      const provinceOption = Array.from(provinceSelect.options).find(
-        (item) => item.value === currentCustomer.city
-      );
-      if (!provinceOption) {
-        return;
-      }
-
-      provinceSelect.value = provinceOption.value;
-      const provinceId = provinceOption.dataset.id;
-      if (!provinceId) {
-        return;
-      }
-
-      const districtData = await api.getDistricts(provinceId);
-      districtData.data.forEach((dist) => {
-        const option = document.createElement("option");
-        option.value = dist.name;
-        option.dataset.id = dist.id;
-        option.textContent = dist.name;
-        districtSelect.appendChild(option);
-      });
-      districtSelect.value = currentCustomer.district;
-
-      const districtOption = Array.from(districtSelect.options).find(
-        (item) => item.value === currentCustomer.district
-      );
-      const districtId = districtOption?.dataset.id;
-      if (!districtId) {
-        return;
-      }
-
-      const wardData = await api.getWards(districtId);
-      wardData.data.forEach((ward) => {
-        const option = document.createElement("option");
-        option.value = ward.name;
-        option.dataset.id = ward.id;
-        option.textContent = ward.name;
-        wardSelect.appendChild(option);
-      });
-      wardSelect.value = currentCustomer.ward;
-    };
 
     // Populate provinces
     provinces.forEach((prov) => {
@@ -196,7 +150,6 @@
         wardData.data.forEach((ward) => {
           const option = document.createElement("option");
           option.value = ward.name;
-          option.dataset.id = ward.id;
           option.textContent = ward.name;
           wardSelect.appendChild(option);
         });
@@ -211,11 +164,8 @@
       try {
         await api.updateCustomer({
           fullName: form.fullName.value,
-          provinceId: provinceSelect.options[provinceSelect.selectedIndex]?.dataset.id || "",
           provinceName: form.provinceName.value,
-          districtId: districtSelect.options[districtSelect.selectedIndex]?.dataset.id || "",
           districtName: form.districtName.value,
-          wardId: wardSelect.options[wardSelect.selectedIndex]?.dataset.id || "",
           wardName: form.wardName.value,
           streetNumber: form.streetNumber.value,
           streetName: form.streetName.value,
@@ -228,8 +178,6 @@
         app.showToast(error.message || "Lỗi cập nhật thông tin", "error");
       }
     });
-
-    preloadCurrentAddress().catch(() => {});
   };
 
   const showOrderConfirmation = (product) => {
@@ -263,6 +211,7 @@
               <select id="orderPaymentMethod" name="paymentMethod" required>
                 <option value="cod">Tiền mặt (COD)</option>
                 <option value="bank_transfer">Chuyển khoản</option>
+                <option value="momo">Ví MoMo</option>
                 <option value="card">Thẻ ngân hàng</option>
               </select>
             </div>
@@ -415,7 +364,7 @@
     });
   };
 
-  const loadProducts = async () => {
+  const loadData = async () => {
     try {
       const [productsResponse, provincesResponse] = await Promise.all([
         api.storeProducts(),
@@ -440,6 +389,6 @@
     }
 
     currentUser = user;
-    await loadProducts();
+    await loadData();
   });
 })();

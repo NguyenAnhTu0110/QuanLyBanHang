@@ -1,11 +1,10 @@
 (() => {
   const statusBadge = (status) => {
     const config = {
-      pending: ["Chờ xử lý", "warning"],
-      confirmed: ["Đã xác nhận", "neutral"],
+      preparing: ["Đang chuẩn bị", "warning"],
       shipping: ["Đang giao", "warning"],
-      completed: ["Hoàn thành", "success"],
-      cancelled: ["Đã hủy", "danger"],
+      success: ["Thành công", "success"],
+      cancelled: ["Hủy hàng", "danger"],
     };
 
     const [label, variant] = config[status] || [status || "Khác", "neutral"];

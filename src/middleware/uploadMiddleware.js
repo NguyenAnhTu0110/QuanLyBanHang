@@ -35,7 +35,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Tạo upload middleware
+// Tạo upload middleware - để multer xử lý FormData text fields
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -44,4 +44,25 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+// Wrapper middleware để handle FormData text fields
+const uploadWrapper = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({
+        success: false,
+        message: `Upload error: ${err.message}`,
+      });
+    } else if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+    next();
+  });
+};
+
+module.exports = {
+  upload: upload.single("image"),
+  uploadWrapper,
+};
