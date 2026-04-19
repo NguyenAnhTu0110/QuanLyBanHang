@@ -5,12 +5,16 @@ const defaultUsers = [
   {
     username: "admin",
     fullName: "Quản trị viên",
+    email: "admin@example.com",
+    phone: "0123456789",
     password: "admin123",
     role: "admin",
   },
   {
     username: "user",
     fullName: "Khách hàng mẫu",
+    email: "user@example.com",
+    phone: "0987654321",
     password: "user123",
     role: "user",
   },
@@ -27,6 +31,8 @@ const seedDefaultUsers = async () => {
     await User.create({
       username: account.username,
       fullName: account.fullName,
+      email: account.email,
+      phone: account.phone,
       passwordHash: hashPassword(account.password),
       role: account.role,
       isActive: true,

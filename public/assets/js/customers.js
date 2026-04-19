@@ -45,7 +45,6 @@
             <td>${app.escapeHtml(customer.phone)}</td>
             <td>${app.escapeHtml(customer.city || "--")}</td>
             <td>${renderStatus(customer.status)}</td>
-            <td><span class="muted">Tự động đồng bộ</span></td>
           </tr>
         `;
         }

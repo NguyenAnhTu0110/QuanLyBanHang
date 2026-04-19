@@ -11,20 +11,10 @@
       <section class="auth-layout">
         <article class="auth-panel auth-welcome">
           <div class="welcome-content">
-            <img src="/img/logo_smarthub.svg" alt="SmartHub" class="logo" />
+            <img src="/img/logo_smarthub.png" alt="SmartHub" class="logo" />
             <h1>TẠO TÀI KHOẢN</h1>
             <h2>SMARTHUB</h2>
             <p>Gia nhập hệ thống quản lý bán hàng hiện đại</p>
-            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e0e0e0; text-align: left; max-width: 280px; margin-left: auto; margin-right: auto;">
-              <p style="margin: 0 0 12px 0; font-size: 0.9em; color: #333;"><strong>📋 Yêu cầu mật khẩu:</strong></p>
-              <ul style="margin: 0; padding: 0 0 0 20px; font-size: 0.85em; line-height: 1.8; color: #555;">
-                <li>Tối thiểu 8 ký tự</li>
-                <li>Chứa ít nhất một chữ hoa</li>
-                <li>Chứa ít nhất một chữ thường</li>
-                <li>Chứa ít nhất một chữ số</li>
-                <li>Chứa ít nhất một ký tự đặc biệt</li>
-              </ul>
-            </div>
           </div>
         </article>
 
@@ -62,7 +52,7 @@
                   id="registerPhone"
                   name="phone"
                   type="tel"
-                  placeholder="Nhập số điện thoại (10-11 chữ số)"
+                  placeholder="Nhập số điện thoại (10 chữ số)"
                   pattern="[0-9]{10,11}"
                   required
                 />
@@ -129,41 +119,43 @@
 
       .welcome-content {
         text-align: center;
-        padding: 40px 20px;
+        padding: 30px 20px;
+        max-height: 80vh;
+        overflow-y: auto;
       }
 
       .welcome-content .logo {
-        width: 100px;
-        height: 100px;
-        margin-bottom: 20px;
+        width: auto;
+        height: 90px;
+        margin-bottom: 16px;
         filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
       }
 
       .welcome-content h1 {
-        font-size: 1.2em;
-        margin: 0 0 8px 0;
+        font-size: 1em;
+        margin: 0 0 6px 0;
         font-weight: 600;
         color: #667eea;
       }
 
       .welcome-content h2 {
-        font-size: 2em;
-        margin: 0 0 12px 0;
+        font-size: 1.6em;
+        margin: 0 0 10px 0;
         font-weight: 700;
         letter-spacing: 2px;
         color: #667eea;
       }
 
       .welcome-content p {
-        font-size: 0.9em;
+        font-size: 0.85em;
         color: #666;
         margin: 0;
       }
 
       .auth-footer {
         text-align: center;
-        margin-top: 16px;
-        padding-top: 16px;
+        margin-top: 10px;
+        padding-top: 10px;
         border-top: 1px solid #eee;
       }
 
@@ -176,37 +168,103 @@
         text-decoration: underline;
       }
 
+      .auth-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .auth-panel .eyebrow {
+        font-size: 0.85em;
+        margin-bottom: 4px; /* Giảm từ 8px */
+      }
+
+      .auth-panel h2 {
+        font-size: 1.3em;
+        margin: 0 0 10px 0; /* Giảm từ 14px */
+      }
+
+      .auth-panel form {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+      
+      /* Ép khoảng cách của grid nhỏ lại nếu có dùng display: grid */
+      .auth-panel form .form-grid {
+        gap: 8px; 
+      }
+
+      .auth-panel form .field {
+        margin-bottom: 8px; /* Giảm từ 10px */
+      }
+
+      .auth-panel form .field label {
+        font-size: 0.9em;
+        margin-bottom: 2px; /* Giảm từ 4px */
+        display: inline-block;
+      }
+
+      .auth-panel form .field input {
+        font-size: 0.9em;
+        padding: 8px 12px; /* Giảm nhẹ padding trên/dưới để form thon gọn hơn */
+      }
+
+      .auth-panel form .field small {
+        font-size: 0.8em;
+      }
+
+      .button-row {
+        margin-top: 8px; /* Giảm từ 12px */
+      }
+
+      .button-row .btn {
+        font-size: 0.9em;
+        padding: 8px 14px;
+      }
+
       .auth-note {
         background: #f5f5f5;
-        padding: 12px 14px;
+        padding: 10px 12px;
         border-radius: 6px;
-        font-size: 0.9em;
-        margin: 16px 0;
+        font-size: 0.8em;
+        margin: 12px 0;
         border-left: 3px solid #ffc107;
+        text-align: left;
       }
 
       .auth-note strong {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        font-size: 0.9em;
+      }
+
+      .auth-note ul {
+        margin: 0;
+        padding: 0 0 0 18px;
+        font-size: 0.85em;
+      }
+
+      .auth-note li {
+        margin-bottom: 2px;
       }
 
       .auth-errors {
         background: #fee;
         border-left: 3px solid #d32f2f;
-        padding: 12px 14px;
+        padding: 10px 12px;
         border-radius: 6px;
-        margin-top: 16px;
+        margin-top: 10px;
         color: #d32f2f;
-        font-size: 0.9em;
+        font-size: 0.85em;
       }
 
       .auth-errors ul {
         margin: 0;
-        padding: 0 0 0 20px;
+        padding: 0 0 0 18px;
       }
 
       .auth-errors li {
-        margin-bottom: 4px;
+        margin-bottom: 3px;
       }
     </style>
   </body>

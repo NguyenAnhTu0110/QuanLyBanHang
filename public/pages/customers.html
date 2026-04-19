@@ -10,8 +10,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <p class="eyebrow">Quản lý khách hàng</p>
-          <h2>Khách Hàng</h2>
+          <p class="eyebrow">quản lý</p>
+          <h2 style="text-align: center;">Khách Hàng</h2>
         </div>
 
         <nav class="nav-menu">
@@ -38,9 +38,10 @@
         </nav>
 
         <div class="sidebar-footer">
-          <p class="eyebrow">Đường dẫn</p>
-          <small><code>GET /api/customers</code></small>
-          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <p class="eyebrow">phiên đăng nhập</p>
+          <small class="role-display">
+            <strong>Chức vụ:</strong> <span data-auth-role></span>
+          </small>
           <div class="button-row">
             <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
               Đăng xuất
@@ -52,14 +53,8 @@
       <main class="content">
         <section class="page-hero">
           <div>
-            <p class="eyebrow">Xem danh sách khách hàng</p>
-            <h1>Quản lý thông tin người mua</h1>
-            <p>
-              Khách hàng được tạo tự động khi người dùng đăng ký. Bạn không thể tạo/sửa/xóa khách hàng thủ công.
-              Hệ thống giữ dữ liệu khách hàng đồng bộ với tài khoản đăng nhập.
-            </p>
-          </div>
-          <div class="hero-pill">Bộ dữ liệu: <code>customers</code></div>
+            <p class="eyebrow">khách hàng</p>
+            <h1>Quản lý thông tin khách hàng</h1>
         </section>
 
         <section class="content-grid two-columns">
@@ -112,12 +107,11 @@
                   <th>Số điện thoại</th>
                   <th>Thành phố</th>
                   <th>Trạng thái</th>
-                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody id="customerTableBody">
                 <tr>
-                  <td colspan="6" class="empty-cell">Đang tải dữ liệu...</td>
+                  <td colspan="5" class="empty-cell">Đang tải dữ liệu...</td>
                 </tr>
               </tbody>
             </table>

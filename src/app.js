@@ -46,8 +46,11 @@ app.use("/api/products", requireAuth, requireRole("admin"), productRoutes);
 app.use("/api/customers", requireAuth, requireRole("admin"), customerRoutes);
 app.use("/api/orders", requireAuth, requireRole("admin"), orderRoutes);
 
+// Static file serving
+app.use(express.static(publicPath));
 app.use("/uploads", express.static(pagePath("uploads")));
 app.use("/assets", express.static(pagePath("assets")));
+app.use("/img", express.static(pagePath("img")));
 
 app.get("/", (req, res) => {
   const role = req.session?.user?.role;

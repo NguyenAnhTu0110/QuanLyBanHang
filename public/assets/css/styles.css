@@ -149,9 +149,10 @@ button {
 
 .page-hero {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
+  flex-direction: column; /* xếp theo cột */
+  justify-content: center; /* căn giữa theo chiều dọc */
+  align-items: center;     /* căn giữa theo chiều ngang */
+  gap: 12px;
   padding: 28px 30px;
   margin-bottom: 24px;
   border: 1px solid rgba(255, 250, 244, 0.8);
@@ -160,7 +161,18 @@ button {
     linear-gradient(135deg, rgba(255, 250, 244, 0.84), rgba(255, 244, 233, 0.72)),
     rgba(255, 255, 255, 0.65);
   box-shadow: var(--shadow);
+  text-align: center; /* căn chữ giữa */
 }
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 
 .page-hero h1 {
   margin: 10px 0 12px;
@@ -173,18 +185,6 @@ button {
   margin: 0;
   line-height: 1.7;
   color: var(--muted);
-}
-
-.hero-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent-dark);
-  white-space: nowrap;
-  font-weight: 700;
 }
 
 .content-grid {
@@ -218,11 +218,14 @@ button {
 
 .panel-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;  
+  align-items: center;      
+  justify-content: center;  
   gap: 16px;
-  padding: 24px 24px 0;
+  padding: 24px;
+  text-align: center;     
 }
+
 
 .panel-header h2,
 .panel-header h3 {
@@ -687,7 +690,7 @@ tbody tr:hover {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  width: min(1200px, 100%);
+  width: min(1000px, 100%);
   max-width: 100%;
   border-radius: 32px;
   overflow: hidden;
@@ -828,12 +831,12 @@ tbody tr:hover {
     radial-gradient(circle at top left, rgba(194, 97, 50, 0.2), transparent 36%),
     linear-gradient(145deg, rgba(239, 224, 207, 0.9), rgba(255, 250, 244, 0.95));
   color: var(--accent-dark);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .product-image img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: 60%;
   object-fit: cover;
 }
 
@@ -892,4 +895,231 @@ tbody tr:hover {
     flex-direction: column;
     align-items: stretch;
   }
+
+  .auth-layout {
+    max-height: 90vh;
+  }
+
+  .auth-panel {
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px 24px;
+  }
+}
+
+/* Optimizations for auth forms */
+@media (max-width: 1080px) {
+  .auth-layout {
+    width: 95vw;
+    max-width: 550px;
+    max-height: 85vh;
+  }
+
+  .auth-panel {
+    padding: 32px 28px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .auth-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .auth-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+  }
+
+  .auth-panel::-webkit-scrollbar-thumb {
+    background: rgba(194, 97, 50, 0.4);
+    border-radius: 10px;
+  }
+
+  .auth-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(194, 97, 50, 0.6);
+  }
+
+  .form-grid {
+    gap: 14px;
+  }
+
+  .field {
+    gap: 6px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .button-row {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 14px;
+  }
+
+  .btn-sm {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+}
+
+.role-display {
+  display: block;      
+  text-align: center;    
+  font-size: 0.9rem;   
+  margin-top: 10px;      
+}
+
+.note-box {
+  flex: 1;                
+  text-align: center;      
+}
+
+/* Container chính */
+.custom-dropdown {
+    position: relative;
+    width: 220px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+/* Nút bấm hiển thị */
+.dropdown-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.dropdown-trigger:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.trigger-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.arrow-down {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+/* Định dạng Icon SVG */
+.status-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Menu thả xuống */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    padding: 5px 0;
+    margin: 0;
+    list-style: none;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+/* Trạng thái mở menu */
+.custom-dropdown.active .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Các mục trong menu */
+.dropdown-menu li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f8fafc;
+}
+
+/* Màu sắc chữ tương ứng với trạng thái (Tone màu Pastel sang trọng) */
+.text-preparing { color: #ca8a04; } /* Vàng đậm */
+.text-shipping { color: #2563eb; } /* Xanh dương */
+.text-success { color: #16a34a; }  /* Xanh lá */
+.text-cancelled { color: #dc2626; } /* Đỏ */
+
+/* Style cho thẻ select hiện đại */
+.modern-select {
+    /* 1. Xóa bỏ giao diện mặc định của trình duyệt */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* 2. Định dạng kích thước và màu nền */
+    min-width: 200px;
+    padding: 10px 36px 10px 16px; /* Chừa khoảng trống bên phải cho mũi tên */
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; /* Bo góc hiện đại */
+    
+    /* 3. Định dạng chữ */
+    font-family: inherit;
+    font-size: 14px;
+    color: #334155;
+    font-weight: 500;
+    
+    /* 4. Hiệu ứng và Mũi tên custom (Dùng mã Base64 SVG để không cần file ảnh ngoài) */
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Đổ bóng rất nhẹ */
+    transition: all 0.2s ease;
+    
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center; /* Căn vị trí mũi tên */
+    background-size: 16px;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.modern-select:hover {
+    border-color: #cbd5e1;
+}
+
+/* Hiệu ứng khi click vào (Focus) */
+.modern-select:focus {
+    border-color: #3b82f6; /* Viền xanh dương */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* Viền sáng lan tỏa xung quanh */
+}
+
+/* Xóa viền focus dotted khó chịu trên Firefox */
+.modern-select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
 }

@@ -240,7 +240,7 @@ const createStoreOrder = asyncHandler(async (req, res) => {
     });
   }
 
-  if (!paymentMethod || !["cod", "bank_transfer", "card"].includes(paymentMethod)) {
+  if (!paymentMethod || !["cod", "bank_transfer", "momo", "card"].includes(paymentMethod)) {
     return res.status(400).json({
       success: false,
       message: "Vui lòng chọn phương thức thanh toán hợp lệ.",

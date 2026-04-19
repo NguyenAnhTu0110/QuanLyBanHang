@@ -6,12 +6,87 @@
   const submitButton = document.getElementById("productSubmitButton");
   const cancelButton = document.getElementById("productCancelButton");
   const categorySelect = document.getElementById("productCategory");
+  const filterCategorySelect = document.getElementById("filterCategory");
   const imageFileInput = document.getElementById("productImageFile");
+  const skuInput = document.getElementById("productSku");
+  const skuHint = document.getElementById("skuHint");
+  const filterResultInfo = document.getElementById("filterResultInfo");
+  const filterResultText = document.getElementById("filterResultText");
+
   let editingId = null;
   let categories = [];
   let products = [];
   let previewUrl = "";
 
+  // ──────────────────────────────────────────────
+  // SKU prefix map: tên danh mục → chữ cái đầu SKU
+  // ──────────────────────────────────────────────
+  const SKU_PREFIX_MAP = {
+    apple: "A",
+    oppo: "O",
+    realme: "R",
+    samsung: "S",
+    vivo: "V",
+    xiaomi: "X",
+  };
+
+  /**
+   * Lấy prefix SKU dựa trên tên danh mục.
+   * Nếu không khớp → dùng chữ cái đầu tiên của tên (in hoa).
+   */
+  const getSkuPrefix = (categoryName) => {
+    if (!categoryName) return null;
+    const key = categoryName.trim().toLowerCase();
+    return SKU_PREFIX_MAP[key] || categoryName.trim()[0].toUpperCase();
+  };
+
+  /**
+   * Tính số thứ tự tiếp theo cho một prefix SKU.
+   * Ví dụ: các SKU A-01, A-03 đã có → trả về A-04.
+   */
+  const getNextSkuNumber = (prefix) => {
+    const regex = new RegExp(`^${prefix}-(\\d+)$`, "i");
+    let maxNum = 0;
+    products.forEach((p) => {
+      if (editingId && p._id === editingId) return; // bỏ qua sản phẩm đang sửa
+      const match = p.sku?.match(regex);
+      if (match) {
+        maxNum = Math.max(maxNum, parseInt(match[1], 10));
+      }
+    });
+    const next = maxNum + 1;
+    return `${prefix}-${String(next).padStart(2, "0")}`;
+  };
+
+  /**
+   * Tự động điền SKU khi người dùng chọn danh mục.
+   * Nếu đang chỉnh sửa → chỉ gợi ý, không ghi đè SKU gốc.
+   */
+  const handleCategoryChange = () => {
+    const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+    const categoryName = selectedOption?.text || "";
+    const prefix = getSkuPrefix(categoryName);
+
+    if (!prefix || !categorySelect.value) {
+      skuHint.textContent = "";
+      return;
+    }
+
+    const suggestedSku = getNextSkuNumber(prefix);
+
+    if (!editingId) {
+      // Chế độ thêm mới: tự điền SKU
+      skuInput.value = suggestedSku;
+      skuHint.textContent = `Gợi ý: ${suggestedSku} (có thể thay đổi)`;
+    } else {
+      // Chế độ chỉnh sửa: chỉ hiển thị gợi ý, không ghi đè
+      skuHint.textContent = `Mã sản phẩm gợi ý cho danh mục này: ${suggestedSku}`;
+    }
+  };
+
+  // ──────────────────────────────────────────────
+  // Render helpers
+  // ──────────────────────────────────────────────
   const renderStatus = (status) =>
     status === "active"
       ? app.badge("Đang bán", "success")
@@ -24,6 +99,25 @@
     });
   };
 
+  /**
+   * Cập nhật dropdown lọc danh mục ở bảng sản phẩm.
+   * Giữ nguyên lựa chọn hiện tại nếu vẫn còn tồn tại.
+   */
+  const populateFilterOptions = () => {
+    const currentValue = filterCategorySelect.value;
+    filterCategorySelect.innerHTML = '<option value="">Tất cả danh mục</option>';
+    categories.forEach((cat) => {
+      const opt = document.createElement("option");
+      opt.value = cat._id;
+      opt.textContent = cat.name;
+      filterCategorySelect.appendChild(opt);
+    });
+    // Khôi phục lựa chọn trước đó nếu còn hợp lệ
+    if (currentValue && categories.some((c) => c._id === currentValue)) {
+      filterCategorySelect.value = currentValue;
+    }
+  };
+
   const resetForm = () => {
     editingId = null;
     form.reset();
@@ -31,6 +125,7 @@
     form.stock.value = "0";
     formTitle.textContent = "Thêm sản phẩm mới";
     submitButton.textContent = "Lưu sản phẩm";
+    skuHint.textContent = "";
     populateCategoryOptions();
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
@@ -38,13 +133,37 @@
     }
   };
 
+  /**
+   * Render bảng sản phẩm, có áp dụng filter danh mục.
+   */
   const renderTable = () => {
-    if (!products.length) {
-      tableBody.innerHTML = app.renderEmptyRow(7, "Chưa có sản phẩm nào.");
+    const filterValue = filterCategorySelect.value;
+
+    const filtered = filterValue
+      ? products.filter((p) => {
+          const catId = p.category?._id || p.category;
+          return catId === filterValue;
+        })
+      : products;
+
+    // Hiển thị thông tin kết quả lọc
+    if (filterValue) {
+      const catName = categories.find((c) => c._id === filterValue)?.name || "";
+      filterResultInfo.style.display = "block";
+      filterResultText.textContent = `Hiển thị ${filtered.length} sản phẩm trong danh mục "${catName}"`;
+    } else {
+      filterResultInfo.style.display = "none";
+    }
+
+    if (!filtered.length) {
+      tableBody.innerHTML = app.renderEmptyRow(
+        7,
+        filterValue ? "Không có sản phẩm nào trong danh mục này." : "Chưa có sản phẩm nào."
+      );
       return;
     }
 
-    tableBody.innerHTML = products
+    tableBody.innerHTML = filtered
       .map(
         (product) => `
           <tr>
@@ -69,6 +188,9 @@
       .join("");
   };
 
+  // ──────────────────────────────────────────────
+  // Data loading
+  // ──────────────────────────────────────────────
   const loadData = async () => {
     try {
       const [categoryResponse, productResponse] = await Promise.all([
@@ -79,6 +201,7 @@
       categories = categoryResponse.data || [];
       products = productResponse.data || [];
       populateCategoryOptions();
+      populateFilterOptions();
       renderTable();
     } catch (error) {
       app.showToast(error.message, "error");
@@ -86,6 +209,9 @@
     }
   };
 
+  // ──────────────────────────────────────────────
+  // Fill form khi chỉnh sửa
+  // ──────────────────────────────────────────────
   const fillForm = (product) => {
     editingId = product._id;
     form.name.value = product.name || "";
@@ -99,9 +225,16 @@
     form.description.value = product.description || "";
     formTitle.textContent = `Cập nhật: ${product.name}`;
     submitButton.textContent = "Cập nhật sản phẩm";
+
+    // Hiển thị gợi ý SKU cho danh mục đang chọn
+    handleCategoryChange();
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // ──────────────────────────────────────────────
+  // Event: Submit form
+  // ──────────────────────────────────────────────
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -110,7 +243,6 @@
       return;
     }
 
-    // Validate required fields
     if (!form.name.value.trim()) {
       app.showToast("Vui lòng nhập tên sản phẩm.", "error");
       form.name.focus();
@@ -147,9 +279,7 @@
     let requestPromise;
 
     try {
-      // Kiểm tra xem có file được chọn không
       if (imageFile) {
-        // Sử dụng FormData để upload file
         const formData = new FormData();
         formData.append("name", form.name.value.trim());
         formData.append("sku", form.sku.value.trim());
@@ -161,13 +291,10 @@
         formData.append("imageUrl", form.imageUrl.value.trim());
         formData.append("description", form.description.value.trim());
 
-        if (editingId) {
-          requestPromise = api.updateWithFile(resource, editingId, formData);
-        } else {
-          requestPromise = api.createWithFile(resource, formData);
-        }
+        requestPromise = editingId
+          ? api.updateWithFile(resource, editingId, formData)
+          : api.createWithFile(resource, formData);
       } else {
-        // Sử dụng JSON API bình thường nếu không có file
         const payload = {
           name: form.name.value.trim(),
           sku: form.sku.value.trim(),
@@ -201,18 +328,15 @@
     }
   });
 
+  // ──────────────────────────────────────────────
+  // Event: Click nút trong bảng (Sửa / Xóa)
+  // ──────────────────────────────────────────────
   tableBody.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
-
-    if (!button) {
-      return;
-    }
+    if (!button) return;
 
     const product = products.find((item) => item._id === button.dataset.id);
-
-    if (!product) {
-      return;
-    }
+    if (!product) return;
 
     if (button.dataset.action === "edit") {
       fillForm(product);
@@ -226,9 +350,7 @@
       try {
         await api.remove(resource, product._id);
         app.showToast("Đã xóa sản phẩm.");
-        if (editingId === product._id) {
-          resetForm();
-        }
+        if (editingId === product._id) resetForm();
         await loadData();
       } catch (error) {
         app.showToast(error.message, "error");
@@ -236,7 +358,21 @@
     }
   });
 
+  // ──────────────────────────────────────────────
+  // Event: Chọn danh mục trong form → auto SKU
+  // ──────────────────────────────────────────────
+  categorySelect.addEventListener("change", handleCategoryChange);
+
+  // ──────────────────────────────────────────────
+  // Event: Filter danh mục ở bảng sản phẩm
+  // ──────────────────────────────────────────────
+  filterCategorySelect.addEventListener("change", renderTable);
+
+  // ──────────────────────────────────────────────
+  // Event: Chọn file ảnh
+  // ──────────────────────────────────────────────
   cancelButton.addEventListener("click", resetForm);
+
   imageFileInput.addEventListener("change", () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
@@ -248,12 +384,12 @@
     app.showToast(`Đã chọn ảnh: ${selected.name}`);
   });
 
+  // ──────────────────────────────────────────────
+  // Init
+  // ──────────────────────────────────────────────
   document.addEventListener("DOMContentLoaded", async () => {
     const user = await auth.protectPage({ roles: ["admin"] });
-
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     resetForm();
     await loadData();

@@ -10,11 +10,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <p class="eyebrow">Bộ dữ liệu 02</p>
-          <h2>Sản Phẩm</h2>
-          <!-- <p>
-            Quản lý giá bán, tồn kho, SKU và liên kết đến danh mục trong MongoDB.
-          </p> -->
+          <p class="eyebrow">quản lý</p>
+          <h2 style="text-align: center;">Sản Phẩm</h2>
         </div>
 
         <nav class="nav-menu">
@@ -41,9 +38,10 @@
         </nav>
 
         <div class="sidebar-footer">
-          <p class="eyebrow">Đường dẫn</p>
-          <small><code>GET/POST/PUT/DELETE /api/products</code></small>
-          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <p class="eyebrow">phiên đăng nhập</p>
+          <small class="role-display">
+            <strong>Chức vụ:</strong> <span data-auth-role></span>
+          </small>
           <div class="button-row">
             <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
               Đăng xuất
@@ -55,14 +53,9 @@
       <main class="content">
         <section class="page-hero">
           <div>
-            <p class="eyebrow">CRUD Sản phẩm</p>
+            <p class="eyebrow">Sản phẩm</p>
             <h1>Quản lý mặt hàng kinh doanh</h1>
-            <p>
-              Form này gồm đầy đủ các thuộc tính cơ bản cho một sản phẩm online:
-              tên, SKU, giá, tồn kho, danh mục và mô tả.
-            </p>
           </div>
-          <div class="hero-pill">Bộ dữ liệu: <code>products</code></div>
         </section>
 
         <section class="content-grid two-columns">
@@ -78,12 +71,13 @@
                 <div class="form-grid">
                   <div class="field">
                     <label for="productName">Tên sản phẩm</label>
-                    <input id="productName" name="name" placeholder="Ví dụ: Tai nghe Bluetooth" required />
+                    <input id="productName" name="name" placeholder="Ví dụ: Iphone 17 promax" required />
                   </div>
 
                   <div class="field">
-                    <label for="productSku">SKU</label>
-                    <input id="productSku" name="sku" placeholder="PRD-001" required />
+                    <label for="productSku">Mã sản phẩm</label>
+                    <input id="productSku" name="sku" placeholder="Tự động điền khi chọn danh mục" required />
+                    <small class="muted" id="skuHint"></small>
                   </div>
 
                   <div class="field">
@@ -158,14 +152,16 @@
             </div>
             <div class="panel-body">
               <ul class="tips-list">
-                <li>SKU là trường duy nhất, phù hợp để demo ràng buộc unique trong MongoDB.</li>
-                <li>Bạn cần tạo ít nhất một danh mục trước khi thêm sản phẩm để chọn category.</li>
+                <li>Mã sản phẩm tự động điền khi chọn danh mục: <strong>A-xx</strong> cho Apple, <strong>O-xx</strong> cho OPPO, <strong>R-xx</strong> cho Realme, <strong>S-xx</strong> cho Samsung, <strong>V-xx</strong> cho Vivo, <strong>X-xx</strong> cho Xiaomi.</li>
+                <li>Mã sản phẩm là trường duy nhất, phù hợp để demo ràng buộc unique trong MongoDB.</li>
+                <li>Cần tạo ít nhất một danh mục trước khi thêm sản phẩm để chọn category.</li>
                 <li>Tồn kho thấp sẽ được đưa lên trang dashboard để cảnh báo.</li>
               </ul>
             </div>
           </article>
         </section>
 
+        <!-- Bảng sản phẩm với filter -->
         <section class="panel">
           <div class="panel-header">
             <div>
@@ -173,12 +169,19 @@
               <h2>Sản phẩm hiện có</h2>
             </div>
           </div>
+          <!-- Filter danh mục — dòng riêng, căn trái -->
+          <div style="padding: 0 16px 12px; display: flex; align-items: center; gap: 12px;">
+            <label for="filterCategory" class="eyebrow" style="white-space: nowrap; margin: 0;">Lọc theo danh mục</label>
+            <select id="filterCategory" class="modern-select">
+              <option value="">Tất cả danh mục</option>
+            </select>
+          </div>
           <div class="panel-body table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Sản phẩm</th>
-                  <th>SKU</th>
+                  <th>Mã sản phẩm</th>
                   <th>Danh mục</th>
                   <th>Giá</th>
                   <th>Tồn kho</th>
@@ -192,6 +195,10 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <!-- Hiển thị số kết quả khi đang filter -->
+          <div class="panel-footer" id="filterResultInfo" style="display:none; padding: 8px 16px;">
+            <small class="muted" id="filterResultText"></small>
           </div>
         </section>
       </main>

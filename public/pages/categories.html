@@ -10,12 +10,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <p class="eyebrow">Bộ dữ liệu 01</p>
-          <h2>Danh Mục Sản Phẩm</h2>
-          <!-- <p>
-            Quản lý nhóm hàng hóa để frontend và backend có dữ liệu liên kết
-            rõ ràng.
-          </p> -->
+          <p class="eyebrow">quản lý</p>
+          <h2 style="text-align: center;">Danh Mục Sản Phẩm</h2>
         </div>
 
         <nav class="nav-menu">
@@ -42,9 +38,11 @@
         </nav>
 
         <div class="sidebar-footer">
-          <p class="eyebrow">Đường dẫn</p>
-          <small><code>GET/POST/PUT/DELETE /api/categories</code></small>
-          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <p class="eyebrow">phiên đăng nhập</p>
+          <small class="role-display">
+            <strong>Chức vụ:</strong> <span data-auth-role></span>
+          </small>
+
           <div class="button-row">
             <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
               Đăng xuất
@@ -56,14 +54,9 @@
       <main class="content">
         <section class="page-hero">
           <div>
-            <p class="eyebrow">CRUD Danh mục</p>
+            <p class="eyebrow">Danh mục</p>
             <h1>Tạo và cập nhật nhóm sản phẩm</h1>
-            <p>
-              Sử dụng form bên dưới để thêm mới danh mục, sửa thông tin hoặc
-              xóa khi không còn được sử dụng.
-            </p>
           </div>
-          <div class="hero-pill">Bộ dữ liệu: <code>categories</code></div>
         </section>
 
         <section class="content-grid two-columns">
@@ -114,10 +107,11 @@
 
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Gợi ý</p>
-                <h2>Một số lưu ý khi CRUD</h2>
-              </div>
+             <div class="note-box">
+              <p class="eyebrow">Gợi ý</p>
+              <h2>Một số lưu ý khi thêm mới</h2>
+            </div>
+
             </div>
             <div class="panel-body">
               <ul class="tips-list">

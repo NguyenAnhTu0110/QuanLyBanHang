@@ -1,19 +1,15 @@
 (() => {
   const productsGrid = document.getElementById("shopProductsGrid");
   let currentUser = null;
-  let currentCustomer = null;
+  let currentCustomer = {};
   let allProducts = [];
-  let provinces = [];
-  let districts = {};
-  let wards = {};
 
   const showCheckoutModal = async (product) => {
-    // Check customer info
     try {
       const customerData = await api.getCustomer();
-      currentCustomer = customerData.data;
+      currentCustomer = customerData.data || {};
 
-      // If customer doesn't have name or address, show update form
+      // Nếu chưa có thông tin, hiển thị form cập nhật (kèm theo sản phẩm để đặt hàng sau đó)
       if (!currentCustomer.fullName || !currentCustomer.address) {
         showAddressUpdateModal(product);
         return;
@@ -25,75 +21,84 @@
     }
   };
 
-  const showAddressUpdateModal = (product) => {
+  const loadAddressData = async () => {
+    try {
+      const [tinhTpRes, quanHuyenRes, xaPhuongRes] = await Promise.all([
+        fetch("/assets/data/tinh_tp.json").then(r => r.json()),
+        fetch("/assets/data/quan_huyen.json").then(r => r.json()),
+        fetch("/assets/data/xa_phuong.json").then(r => r.json()),
+      ]);
+      return {
+        provinces: tinhTpRes,
+        districts: quanHuyenRes,
+        wards: xaPhuongRes,
+      };
+    } catch (error) {
+      console.error("Lỗi tải dữ liệu địa chỉ:", error);
+      return null;
+    }
+  };
+
+ const showAddressUpdateModal = async (product = null) => {
+    const addressData = await loadAddressData();
+    if (!addressData) {
+      app.showToast("Không tải được dữ liệu địa chỉ", "error");
+      return;
+    }
+
+    const { provinces: provinceData, districts: districtData, wards: wardData } = addressData;
+
+    const title = product 
+        ? "Vui lòng cập nhật thông tin cá nhân trước khi mua" 
+        : "Cập nhật thông tin giao hàng cá nhân";
+
     const modalContent = `
-      <div style="padding: 20px; background: white; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+      <div style="padding: 20px; background: white; border-radius: 8px; max-width: 500px; margin: 0 auto; max-height: 85vh; overflow-y: auto;">
         <p class="eyebrow">Cập nhật thông tin</p>
-        <h2>Vui lòng cập nhật thông tin cá nhân trước khi mua</h2>
-        
+        <h2>${title}</h2>
+
         <form id="addressUpdateForm" style="margin-top: 20px;">
-          <div class="form-grid">
-            <div class="field full">
-              <label for="updateFullName">Họ và tên</label>
-              <input
-                id="updateFullName"
-                name="fullName"
-                type="text"
-                placeholder="Nhập họ tên"
-                value="${currentCustomer.fullName || ''}"
-                required
-              />
+          <div class="form-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateFullName" style="font-size: 0.9em; font-weight: 600;">Họ và tên</label>
+              <input id="updateFullName" name="fullName" type="text" placeholder="Ví dụ: Nguyễn Anh Tú" value="${currentCustomer.fullName || ''}" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required />
             </div>
 
-            <div class="field full">
-              <label for="updateProvince">Tỉnh/Thành phố</label>
-              <select id="updateProvince" name="provinceName" required>
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateProvince" style="font-size: 0.9em; font-weight: 600;">Tỉnh/Thành phố</label>
+              <select id="updateProvince" name="provinceName" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required>
                 <option value="">-- Chọn Tỉnh/Thành phố --</option>
               </select>
             </div>
 
-            <div class="field full">
-              <label for="updateDistrict">Quận/Huyện</label>
-              <select id="updateDistrict" name="districtName" required>
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateDistrict" style="font-size: 0.9em; font-weight: 600;">Quận/Huyện</label>
+              <select id="updateDistrict" name="districtName" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required>
                 <option value="">-- Vui lòng chọn Tỉnh/Thành phố trước --</option>
               </select>
             </div>
 
-            <div class="field full">
-              <label for="updateWard">Phường/Xã</label>
-              <select id="updateWard" name="wardName" required>
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateWard" style="font-size: 0.9em; font-weight: 600;">Phường/Xã</label>
+              <select id="updateWard" name="wardName" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required>
                 <option value="">-- Vui lòng chọn Quận/Huyện trước --</option>
               </select>
             </div>
 
-            <div class="field full">
-              <label for="updateStreetNumber">Số nhà</label>
-              <input
-                id="updateStreetNumber"
-                name="streetNumber"
-                type="text"
-                placeholder="Ví dụ: 123"
-                value="${currentCustomer.streetNumber || ''}"
-                required
-              />
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateStreetNumber" style="font-size: 0.9em; font-weight: 600;">Số nhà, tòa nhà</label>
+              <input id="updateStreetNumber" name="streetNumber" type="text" placeholder="Ví dụ: 123" value="${currentCustomer.streetNumber || ''}" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required />
             </div>
 
-            <div class="field full">
-              <label for="updateStreetName">Tên đường</label>
-              <input
-                id="updateStreetName"
-                name="streetName"
-                type="text"
-                placeholder="Ví dụ: Nguyễn Hữu Cảnh"
-                value="${currentCustomer.streetName || ''}"
-                required
-              />
+            <div class="field full" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="updateStreetName" style="font-size: 0.9em; font-weight: 600;">Tên đường</label>
+              <input id="updateStreetName" name="streetName" type="text" placeholder="Ví dụ: Đường Nguyễn Hữu Cảnh" value="${currentCustomer.streetName || ''}" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9em;" required />
             </div>
           </div>
 
-          <div class="button-row" style="margin-top: 20px;">
-            <button class="btn btn-primary" type="submit">Lưu và tiếp tục</button>
-            <button class="btn btn-secondary" type="button" onclick="location.reload()">Hủy</button>
+          <div class="button-row" style="margin-top: 16px; gap: 10px; display: flex;">
+            <button class="btn btn-primary" type="submit" style="flex: 1; padding: 10px 12px; font-size: 0.9em;">Xác nhận Lưu</button>
+            <button class="btn btn-secondary" type="button" onclick="this.closest('.modal-overlay').remove()" style="flex: 1; padding: 10px 12px; font-size: 0.9em;">Hủy</button>
           </div>
         </form>
       </div>
@@ -106,116 +111,75 @@
     const provinceSelect = document.getElementById("updateProvince");
     const districtSelect = document.getElementById("updateDistrict");
     const wardSelect = document.getElementById("updateWard");
-    const preloadCurrentAddress = async () => {
-      if (!currentCustomer.city || !currentCustomer.district || !currentCustomer.ward) {
-        return;
-      }
 
-      const provinceOption = Array.from(provinceSelect.options).find(
-        (item) => item.value === currentCustomer.city
-      );
-      if (!provinceOption) {
-        return;
-      }
-
-      provinceSelect.value = provinceOption.value;
-      const provinceId = provinceOption.dataset.id;
-      if (!provinceId) {
-        return;
-      }
-
-      const districtData = await api.getDistricts(provinceId);
-      districtData.data.forEach((dist) => {
-        const option = document.createElement("option");
-        option.value = dist.name;
-        option.dataset.id = dist.id;
-        option.textContent = dist.name;
-        districtSelect.appendChild(option);
-      });
-      districtSelect.value = currentCustomer.district;
-
-      const districtOption = Array.from(districtSelect.options).find(
-        (item) => item.value === currentCustomer.district
-      );
-      const districtId = districtOption?.dataset.id;
-      if (!districtId) {
-        return;
-      }
-
-      const wardData = await api.getWards(districtId);
-      wardData.data.forEach((ward) => {
-        const option = document.createElement("option");
-        option.value = ward.name;
-        option.dataset.id = ward.id;
-        option.textContent = ward.name;
-        wardSelect.appendChild(option);
-      });
-      wardSelect.value = currentCustomer.ward;
-    };
-
-    // Populate provinces
-    provinces.forEach((prov) => {
+    // Lấy dữ liệu Tỉnh
+    Object.values(provinceData).forEach((prov) => {
       const option = document.createElement("option");
-      option.value = prov.name;
-      option.dataset.id = prov.id;
-      option.textContent = prov.name;
+      option.value = prov.name_with_type;
+      option.dataset.code = prov.code; 
+      option.textContent = prov.name_with_type;
       provinceSelect.appendChild(option);
     });
 
-    // Handle province change
-    provinceSelect.addEventListener("change", async (e) => {
-      const provinceId = e.target.options[e.target.selectedIndex].dataset.id;
+    // Lấy dữ liệu Huyện khi đổi Tỉnh
+    provinceSelect.addEventListener("change", (e) => {
+      const provinceCode = e.target.options[e.target.selectedIndex].dataset.code;
       districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
       wardSelect.innerHTML = '<option value="">-- Vui lòng chọn Quận/Huyện trước --</option>';
 
-      if (!provinceId) return;
+      if (!provinceCode) return;
 
-      try {
-        const districtData = await api.getDistricts(provinceId);
-        districtData.data.forEach((dist) => {
+      Object.values(districtData).forEach((dist) => {
+        if (dist.parent_code === provinceCode) {
           const option = document.createElement("option");
-          option.value = dist.name;
-          option.dataset.id = dist.id;
-          option.textContent = dist.name;
+          option.value = dist.name_with_type;
+          option.dataset.code = dist.code;
+          option.textContent = dist.name_with_type;
           districtSelect.appendChild(option);
-        });
-      } catch (error) {
-        app.showToast("Lỗi khi tải danh sách quận/huyện", "error");
-      }
+        }
+      });
     });
 
-    // Handle district change
-    districtSelect.addEventListener("change", async (e) => {
-      const districtId = e.target.options[e.target.selectedIndex].dataset.id;
+    // Lấy dữ liệu Xã khi đổi Huyện
+    districtSelect.addEventListener("change", (e) => {
+      const districtCode = e.target.options[e.target.selectedIndex].dataset.code;
       wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
 
-      if (!districtId) return;
+      if (!districtCode) return;
 
-      try {
-        const wardData = await api.getWards(districtId);
-        wardData.data.forEach((ward) => {
+      Object.values(wardData).forEach((ward) => {
+        if (ward.parent_code === districtCode) {
           const option = document.createElement("option");
-          option.value = ward.name;
-          option.dataset.id = ward.id;
-          option.textContent = ward.name;
+          option.value = ward.name_with_type;
+          option.dataset.code = ward.code; // ĐÃ THÊM DÒNG NÀY ĐỂ FIX LỖI
+          option.textContent = ward.name_with_type;
           wardSelect.appendChild(option);
-        });
-      } catch (error) {
-        app.showToast("Lỗi khi tải danh sách phường/xã", "error");
-      }
+        }
+      });
     });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      // Lấy ID (code) của các địa chỉ được chọn
+      const provinceCode = provinceSelect.options[provinceSelect.selectedIndex]?.dataset.code;
+      const districtCode = districtSelect.options[districtSelect.selectedIndex]?.dataset.code;
+      const wardCode = wardSelect.options[wardSelect.selectedIndex]?.dataset.code;
+
+      // Validate phía FE trước khi gửi
+      if (!provinceCode || !districtCode || !wardCode) {
+        app.showToast("Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện, Phường/Xã", "error");
+        return;
+      }
+
       try {
         await api.updateCustomer({
           fullName: form.fullName.value,
-          provinceId: provinceSelect.options[provinceSelect.selectedIndex]?.dataset.id || "",
+          provinceId: provinceCode,     // Thêm lại các ID để Backend không chửi
           provinceName: form.provinceName.value,
-          districtId: districtSelect.options[districtSelect.selectedIndex]?.dataset.id || "",
+          districtId: districtCode,     // Thêm lại các ID để Backend không chửi
           districtName: form.districtName.value,
-          wardId: wardSelect.options[wardSelect.selectedIndex]?.dataset.id || "",
+          wardId: wardCode,             // Thêm lại các ID để Backend không chửi
           wardName: form.wardName.value,
           streetNumber: form.streetNumber.value,
           streetName: form.streetName.value,
@@ -223,13 +187,20 @@
 
         modal.remove();
         app.showToast("Cập nhật thông tin thành công");
-        showOrderConfirmation(product);
+
+        const nameSpan = document.querySelector("[data-auth-name]");
+        if(nameSpan) {
+            nameSpan.textContent = form.fullName.value;
+        }
+
+        if (product) {
+          showOrderConfirmation(product);
+        }
+
       } catch (error) {
         app.showToast(error.message || "Lỗi cập nhật thông tin", "error");
       }
     });
-
-    preloadCurrentAddress().catch(() => {});
   };
 
   const showOrderConfirmation = (product) => {
@@ -263,6 +234,7 @@
               <select id="orderPaymentMethod" name="paymentMethod" required>
                 <option value="cod">Tiền mặt (COD)</option>
                 <option value="bank_transfer">Chuyển khoản</option>
+                <option value="momo">Ví MoMo</option>
                 <option value="card">Thẻ ngân hàng</option>
               </select>
             </div>
@@ -278,8 +250,7 @@
             </div>
 
             <div class="field full" style="background: #f5f5f5; padding: 12px; border-radius: 4px;">
-              <p><strong>Khách hàng:</strong> ${app.escapeHtml(currentCustomer.fullName)}</p>
-              <p><strong>Địa chỉ giao hàng:</strong> ${app.escapeHtml(currentCustomer.address)}</p>
+              <p><strong>Khách hàng:</strong> ${app.escapeHtml(currentCustomer.fullName || document.querySelector("[data-auth-name]").textContent)}</p>
             </div>
           </div>
 
@@ -377,7 +348,6 @@
           <article class="product-card">
             <div class="product-image">${image}</div>
             <div>
-              <p class="eyebrow">Sản phẩm</p>
               <h3>${app.escapeHtml(product.name)}</h3>
               <p>${app.escapeHtml(product.description || "Chưa có mô tả cho sản phẩm này.")}</p>
             </div>
@@ -407,7 +377,7 @@
     productsGrid.querySelectorAll('[data-product-id]').forEach((btn) => {
       btn.addEventListener("click", () => {
         const productId = btn.dataset.productId;
-        const product = products.find((p) => p._id === productId);
+        const product = allProducts.find((p) => p._id === productId);
         if (product) {
           showCheckoutModal(product);
         }
@@ -415,15 +385,10 @@
     });
   };
 
-  const loadProducts = async () => {
+  const loadData = async () => {
     try {
-      const [productsResponse, provincesResponse] = await Promise.all([
-        api.storeProducts(),
-        api.getProvinces(),
-      ]);
-
+      const productsResponse = await api.storeProducts();
       allProducts = productsResponse.data || [];
-      provinces = provincesResponse.data || [];
       renderProducts(allProducts);
     } catch (error) {
       app.showToast(error.message, "error");
@@ -440,6 +405,21 @@
     }
 
     currentUser = user;
-    await loadProducts();
+    
+    // Bắt sự kiện cho nút Cập nhật tài khoản mới thêm
+    const btnUpdateAccount = document.getElementById("btnUpdateAccount");
+    if (btnUpdateAccount) {
+      btnUpdateAccount.addEventListener("click", async () => {
+        try {
+          const customerData = await api.getCustomer();
+          currentCustomer = customerData.data || {};
+          showAddressUpdateModal(); // Gọi Modal mà không truyền tham số product
+        } catch (error) {
+          app.showToast("Không thể tải thông tin để cập nhật", "error");
+        }
+      });
+    }
+
+    await loadData();
   });
 })();

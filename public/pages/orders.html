@@ -10,12 +10,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <p class="eyebrow">Bộ dữ liệu 04</p>
-          <h2>Đơn Hàng</h2>
-          <!-- <p>
-            Tạo đơn hàng online với nhiều sản phẩm, liên kết khách hàng và theo
-            dõi tổng tiền.
-          </p> -->
+          <p class="eyebrow">quản lý</p>
+          <h2 style="text-align: center;">Đơn Hàng</h2>
         </div>
 
         <nav class="nav-menu">
@@ -42,9 +38,10 @@
         </nav>
 
         <div class="sidebar-footer">
-          <p class="eyebrow">Đường dẫn</p>
-          <small><code>GET /api/orders · PATCH payment-status</code></small>
-          <small><strong data-auth-name>Đang tải...</strong> · <span data-auth-role></span></small>
+          <p class="eyebrow">phiên đăng nhập</p>
+          <small class="role-display">
+            <strong>Chức vụ:</strong> <span data-auth-role></span>
+          </small>
           <div class="button-row">
             <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
               Đăng xuất
@@ -56,14 +53,9 @@
       <main class="content">
         <section class="page-hero">
           <div>
-            <p class="eyebrow">CRUD Đơn hàng</p>
-            <h1>Thêm đơn và cập nhật trạng thái giao dịch</h1>
-            <p>
-              Đơn hàng là bộ dữ liệu tổng hợp: liên kết khách hàng và sản phẩm,
-              tính tổng tiền từ danh sách mặt hàng trong form.
-            </p>
+            <p class="eyebrow">Đơn hàng</p>
+            <h1>Cập nhật trạng thái giao dịch</h1>
           </div>
-          <div class="hero-pill">Bộ dữ liệu: <code>orders</code></div>
         </section>
 
         <section class="content-grid two-columns">
@@ -75,18 +67,11 @@
               </div>
             </div>
             <div class="panel-body">
-              <p style="margin-bottom: 12px;">
-                <strong>ℹ️ Đơn hàng chỉ được tạo qua cửa hàng trực tuyến</strong>
-              </p>
-              <p>
-                Khách hàng tạo đơn hàng thông qua trang shop. Bạn không thể tạo/sửa/xóa đơn hàng thủ công.
-              </p>
-              <p style="margin-top: 12px;">
+              <p style="margin-top: 0px;">
                 <strong>Quyền thao tác của Admin:</strong>
               </p>
               <ul class="tips-list">
                 <li>Xem danh sách tất cả đơn hàng</li>
-                <li>Xem chi tiết từng đơn hàng</li>
                 <li>Cập nhật trạng thái thanh toán (Đã thu/Chưa thu) cho đơn không phải tiền mặt</li>
                 <li>Cập nhật trạng thái giao hàng thủ công qua dropdown 4 trạng thái</li>
               </ul>
@@ -110,10 +95,17 @@
                 <strong id="ordersPendingCount">0</strong>
               </div>
               <div class="summary-row">
+                <span>Đang giao</span>
+                <strong id="ordersShippingCount">0</strong>
+              </div>
+              <div class="summary-row">
                 <span>Đã hoàn thành</span>
                 <strong id="ordersCompletedCount">0</strong>
               </div>
-
+              <div class="summary-row">
+                <span>Đã hủy</span>
+                <strong id="ordersCancelledCount">0</strong>
+              </div>
               <ul class="tips-list">
                 <li>Cập nhật trạng thái giao dịch để theo dõi tiến độ đơn hàng.</li>
               </ul>
@@ -128,6 +120,24 @@
               <h2>Lịch sử đơn hàng</h2>
             </div>
           </div>
+
+          <!-- Filter trạng thái — dòng riêng, căn trái -->
+          <div style="padding: 0 16px 14px; display: flex; align-items: center; gap: 12px;">
+            <label for="orderStatusFilter" class="eyebrow" style="white-space: nowrap; margin: 0;">Lọc theo trạng thái</label>
+            <select id="orderStatusFilter" class="modern-select">
+              <option value="">Tất cả trạng thái</option>
+              <option value="preparing">Đang chuẩn bị</option>
+              <option value="shipping">Đang giao</option>
+              <option value="success">Thành công</option>
+              <option value="cancelled">Hủy hàng</option>
+            </select>
+          </div>
+
+          <!-- Thông tin kết quả lọc -->
+          <div id="orderFilterResultInfo" style="display:none; padding: 0 16px 8px;">
+            <small class="muted" id="orderFilterResultText"></small>
+          </div>
+
           <div class="panel-body table-wrap">
             <table>
               <thead>

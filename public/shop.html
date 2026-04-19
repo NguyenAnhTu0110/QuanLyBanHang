@@ -3,50 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trang Web Bán Hàng</title>
+    <title>Smart Hub</title>
     <link rel="stylesheet" href="/assets/css/styles.css" />
   </head>
   <body data-page="shop">
     <main class="store-shell">
       <header class="store-topbar">
         <div>
-          <p class="eyebrow">Cửa hàng online</p>
+          <div style="display: flex; align-items: center;">
+            <img src="/img/logo_smarthub_shop.png" style="height: 50px; width: auto;" alt="Smart Hub Logo">
+            <p class="eyebrow" style="padding: 0px;">Smart Hub</p>
+          </div>
           <h2>Xin chào, <span data-auth-name>Đang tải...</span></h2>
           <small>Vai trò: <span data-auth-role>Người dùng</span></small>
         </div>
 
         <div class="button-row">
+          <button class="btn btn-primary btn-sm" type="button" id="btnUpdateAccount">
+            Cập nhật tài khoản
+          </button>
           <button class="btn btn-secondary btn-sm" type="button" data-logout-button>
             Đăng xuất
           </button>
         </div>
       </header>
-
-      <section class="store-hero">
-        <article class="store-card">
-          <p class="eyebrow">Mua sắm nhanh</p>
-          <h1>Danh sách sản phẩm đang bán</h1>
-          <p>
-            Trang này hiển thị cơ bản các sản phẩm đã được quản trị viên nhập
-            vào hệ thống và đang ở trạng thái kinh doanh.
-          </p>
-        </article>
-
-        <article class="store-card">
-          <p class="eyebrow">Thông tin hiển thị</p>
-          <h2>Xem nhanh dữ liệu sản phẩm</h2>
-          <p>
-            Mỗi sản phẩm gồm tên, danh mục, giá bán, tồn kho và mô tả ngắn để
-            user dễ xem thử giao diện website bán hàng.
-          </p>
-        </article>
-      </section>
-
       <section class="store-card">
         <div class="panel-header" style="padding: 0 0 18px;">
-          <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
             <p class="eyebrow">Sản phẩm</p>
-            <h2>Toàn bộ sản phẩm đang mở bán</h2>
           </div>
         </div>
 
