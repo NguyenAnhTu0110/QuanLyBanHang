@@ -65,11 +65,11 @@
       </div>
     `;
 
-    const actionButtons = isNonCOD
+    const paymentActionButton = isNonCOD
       ? `<button class="btn btn-secondary btn-sm" data-toggle-payment-status="${order._id}">
            ${order.paymentStatus === "received" ? "X" : "✓"}
          </button>`
-      : `<span class="muted">Chưa thanh toán</span>`;
+      : "";
 
     return `
       <tr data-order-id="${order._id}">
@@ -79,8 +79,17 @@
         <td><strong>${app.formatCurrency(order.totalAmount)}</strong></td>
         <td>${app.escapeHtml(paymentMethod)}</td>
         <td>${deliveryControl}</td>
-        <td>${paymentStatusCell}</td>
-        <td>${actionButtons}</td>
+        <td>
+          <div class="payment-cell">
+            ${paymentStatusCell}
+            ${paymentActionButton}
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-danger btn-sm delete-btn" data-id="${order._id}" data-code="${app.escapeHtml(order.orderCode)}">
+            Xóa
+          </button>
+        </td>
       </tr>
     `;
   };
@@ -146,6 +155,31 @@
     document.getElementById("ordersCancelledCount").textContent = orders.filter((o) => o.status === "cancelled").length;
   };
 
+  // Core logic xử lý Xóa đơn hàng
+  const handleDeleteOrder = async (id, code) => {
+    // 1. Validate UX: Luôn confirm trước hành động phá hủy dữ liệu
+    if (!confirm(`Bạn có chắc chắn muốn xóa đơn hàng "${code}"? Hành động này không thể hoàn tác.`)) {
+      return;
+    }
+
+    try {
+      // 2. Gọi API
+      await api.remove(resource, id);
+      
+      // 3. Thông báo thành công
+      app.showToast("Đã xóa đơn hàng thành công", "success");
+      
+      // 4. Cập nhật Local State và Render lại
+      orders = orders.filter(o => o._id !== id);
+      renderOrders();
+      updateSummary();
+      
+    } catch (error) {
+      console.error("Delete error:", error);
+      app.showToast(error.message || "Lỗi hệ thống: Không thể xóa đơn hàng", "error");
+    }
+  };
+
   const loadOrders = async () => {
     try {
       const response = await api.list(resource);
@@ -167,6 +201,15 @@
 
     // Event delegation cho custom delivery dropdown trong bảng
     tableBody.addEventListener("click", async (event) => {
+      // Xử lý nút xóa
+      const deleteBtn = event.target.closest(".delete-btn");
+      if (deleteBtn) {
+        const orderId = deleteBtn.dataset.id;
+        const orderCode = deleteBtn.dataset.code;
+        handleDeleteOrder(orderId, orderCode);
+        return;
+      }
+
       const trigger = event.target.closest(".dropdown-trigger");
       if (trigger) {
         const dropdown = trigger.closest(".custom-dropdown");

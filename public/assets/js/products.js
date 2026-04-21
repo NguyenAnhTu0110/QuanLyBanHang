@@ -292,8 +292,8 @@
         formData.append("description", form.description.value.trim());
 
         requestPromise = editingId
-          ? api.updateWithFile(resource, editingId, formData)
-          : api.createWithFile(resource, formData);
+          ? api.update(resource, editingId, formData)
+          : api.create(resource, formData);
       } else {
         const payload = {
           name: form.name.value.trim(),

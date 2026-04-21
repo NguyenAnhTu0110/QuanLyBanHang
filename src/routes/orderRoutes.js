@@ -3,11 +3,11 @@ const orderController = require("../controllers/orderController");
 
 const router = express.Router();
 
-// Read-only operations for admin + payment status updates
+// Read, Delete operations for admin + payment status updates
 // Orders are created via /api/store/orders endpoint by users
-// Admins can only view orders and update payment status
+// Admins can view orders, delete orders and update payment/delivery status
 router.route("/").get(orderController.getAllOrders);
-router.route("/:id").get(orderController.getOrderById);
+router.route("/:id").get(orderController.getOrderById).delete(orderController.deleteOrder);
 
 // Payment status update endpoint - admin can track payment collection
 router.patch("/:id/payment-status", orderController.updatePaymentStatus);
